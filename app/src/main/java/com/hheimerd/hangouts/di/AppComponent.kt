@@ -1,19 +1,41 @@
 package com.hheimerd.hangouts.di
 
 import android.content.Context
+import androidx.room.Room
+import com.hheimerd.hangouts.repository.ContactRepository
+import com.hheimerd.hangouts.repository.database.room.ContactDao
+import com.hheimerd.hangouts.repository.database.room.ContactRoomDatabase
+import com.hheimerd.hangouts.repository.database.room.RoomContactRepository
 import dagger.Binds
-import dagger.Component
 import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Component(modules = [AppModule::class])
-interface AppComponent  {
-    @Component.Builder
-    interface Builder {
-        fun setContext(context: Context): Builder
+
+@Module(includes = [DatabaseBindingsModule::class])
+@InstallIn(SingletonComponent::class)
+class DatabaseModule {
+    @Singleton
+    @Provides
+    fun getContactsRoomDatabase(@ApplicationContext context: Context): ContactRoomDatabase {
+        return Room
+            .databaseBuilder(context, ContactRoomDatabase::class.java, ContactRoomDatabase.DATABASE_NAME)
+            .build()
+    }
+
+    @Provides
+    fun getContactsDao(contactRoomDatabase: ContactRoomDatabase): ContactDao {
+        return contactRoomDatabase.getDao()
     }
 }
 
 @Module
-abstract class AppModule {
-    // TODO: Add contact repository
+@InstallIn(SingletonComponent::class)
+interface DatabaseBindingsModule {
+    @Binds
+    fun bindContactsRepository(contactRepository: RoomContactRepository):
+            ContactRepository
 }
