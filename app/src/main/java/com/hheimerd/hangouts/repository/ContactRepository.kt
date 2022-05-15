@@ -7,7 +7,7 @@ interface ContactRepository {
 
     fun getAll(limit: Int, offset: Int): Flow<List<Contact>>
 
-    fun getById(string: String): Flow<Contact>
+    fun getById(id: String): Flow<Contact>
 
     suspend fun create(contact: Contact)
 

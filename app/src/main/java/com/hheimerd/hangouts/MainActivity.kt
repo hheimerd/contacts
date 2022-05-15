@@ -1,26 +1,21 @@
 package com.hheimerd.hangouts
 
 import android.os.Bundle
-import android.widget.ListView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hheimerd.hangouts.components.SearchTopAppBar
+import com.hheimerd.hangouts.models.Contact
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -30,34 +25,53 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HangoutsTheme {
-                val vm: ContactsViewModel by viewModels()
-                val contacts = vm.getAllContacts().collectAsState(listOf())
-
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    LazyColumn {
-                        items(contacts.value) {
-                            Text(text = it.name)
-                        }
-                    }
-                }
+                MainScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun MainScreen() {
+    val vm = viewModel<ContactsViewModel>()
+    val contacts = vm.getAllContacts().collectAsState(listOf()).value
+
+    MainScreenContent(contacts)
 }
 
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun MainScreenContent(contacts: List<Contact>) {
+    val scaffoldState = rememberScaffoldState()
+    val searchValue = rememberSaveable { mutableStateOf("") }
+
     HangoutsTheme {
-        Greeting("Android")
+        Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = {
+                SearchTopAppBar(
+                    searchValue.value,
+                    onSearchChanged = { searchValue.value = it }
+                )
+            },
+            backgroundColor = MaterialTheme.colors.background
+        ) {
+
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun SearchPreview() {
+    HangoutsTheme(true) {
+        Scaffold(
+            topBar = {
+                SearchTopAppBar("", {})
+            },
+            backgroundColor = MaterialTheme.colors.background
+        ) {
+
+        }
     }
 }

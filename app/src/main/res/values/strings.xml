@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Hangouts</string>
+    <string name="search">Search</string>
+    <string name="search_label">Search contacts</string>
+    <string name="more">More</string>
+    <string name="add_contact">Add contact</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -22,5 +22,5 @@ interface ContactDao {
     fun getById(id: String): Flow<Contact>
 
     @Query("SELECT * FROM ${Contact.TABLE_NAME} LIMIT :limit OFFSET :offset")
-    fun getAll(offset: Int, limit: Int): Flow<List<Contact>>
+    fun getAll(limit: Int, offset: Int): Flow<List<Contact>>
 }

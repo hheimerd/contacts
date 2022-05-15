@@ -9,7 +9,8 @@ data class Contact(
     val phone: String,
     val name: String,
     val secondName: String,
-    val imageUri: String?,
+
+    val imageUri: String? = null,
 
     @PrimaryKey
     val id: String = UUID.randomUUID().toString()
