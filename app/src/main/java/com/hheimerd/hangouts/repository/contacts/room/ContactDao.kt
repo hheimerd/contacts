@@ -1,4 +1,4 @@
-package com.hheimerd.hangouts.repository.database.room
+package com.hheimerd.hangouts.repository.contacts.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

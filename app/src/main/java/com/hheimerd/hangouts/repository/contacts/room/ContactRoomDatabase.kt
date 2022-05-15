@@ -1,4 +1,4 @@
-package com.hheimerd.hangouts.repository.database.room
+package com.hheimerd.hangouts.repository.contacts.room
 
 import android.content.Context
 import androidx.room.Database

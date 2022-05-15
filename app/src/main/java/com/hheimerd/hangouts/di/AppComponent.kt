@@ -2,10 +2,10 @@ package com.hheimerd.hangouts.di
 
 import android.content.Context
 import androidx.room.Room
-import com.hheimerd.hangouts.repository.ContactRepository
-import com.hheimerd.hangouts.repository.database.room.ContactDao
-import com.hheimerd.hangouts.repository.database.room.ContactRoomDatabase
-import com.hheimerd.hangouts.repository.database.room.RoomContactRepository
+import com.hheimerd.hangouts.repository.contacts.ContactRepository
+import com.hheimerd.hangouts.repository.contacts.room.ContactDao
+import com.hheimerd.hangouts.repository.contacts.room.ContactRoomDatabase
+import com.hheimerd.hangouts.repository.contacts.room.RoomContactRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

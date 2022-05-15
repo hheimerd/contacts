@@ -1,4 +1,4 @@
-package com.hheimerd.hangouts.repository
+package com.hheimerd.hangouts.repository.contacts
 
 import com.hheimerd.hangouts.models.Contact
 import kotlinx.coroutines.flow.Flow
