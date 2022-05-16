@@ -25,7 +25,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         setContent {
+//            val systemUiController = rememberSystemUiController()
+//            systemUiController.setSystemBarsColor(Color.Transparent,
+//                darkIcons = false)
+
             HangoutsTheme {
                 MainScreen()
             }
@@ -85,7 +90,7 @@ val testContact = Contact("+79152152125", "Name", "Surname");
 
 
 
-@Preview
+@Preview(showSystemUi = true)
 @Composable
 fun PreviewMainScreenContent() {
     val contacts = List(25) {
@@ -97,20 +102,5 @@ fun PreviewMainScreenContent() {
 
     HangoutsTheme(true) {
         MainScreenContent(contacts)
-    }
-}
-
-@Preview
-@Composable
-fun SearchPreview() {
-    HangoutsTheme(true) {
-        Scaffold(
-            topBar = {
-                SearchTopAppBar("", {})
-            },
-            backgroundColor = MaterialTheme.colors.background
-        ) {
-
-        }
     }
 }

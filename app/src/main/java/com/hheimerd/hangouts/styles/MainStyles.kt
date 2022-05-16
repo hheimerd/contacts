@@ -26,5 +26,5 @@ fun Modifier.avatarSize(): Modifier {
 }
 
 fun Modifier.avatarSpace(): Modifier {
-    return this.width(20.dp)
+    return this.width(14.dp)
 }

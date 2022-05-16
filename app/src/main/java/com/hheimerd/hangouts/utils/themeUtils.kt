@@ -19,14 +19,15 @@ fun Color.Companion.random(seed: Any? = null): Color {
 }
 
 val colors = listOf(
-    Color.Cyan,
-    Color.Gray,
-    Color.LightGray,
-    Color.Red,
-    Color.Green,
-    Color.Blue,
-    Color.Yellow,
-    Color.Magenta
+    Color(0xFFFED6BC),
+    Color(0xFFFFFADD),
+    Color(0xFFDEF7FE),
+    Color(0xFFE7ECFF),
+    Color(0xFFC3FBD8),
+    Color(0xFFFDEED9),
+    Color(0xFFF6FFF8),
+    Color(0xFFB5F2EA),
+    Color(0xFFC6D8FF),
 )
 
 fun getColorByInt(index: Int): Color {

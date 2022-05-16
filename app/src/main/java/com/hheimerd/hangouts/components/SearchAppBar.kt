@@ -17,10 +17,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.styles.transparent
+import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.typeUtils.Action
 import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 
@@ -43,17 +45,22 @@ fun SearchTopAppBar(
             elevation = 4.dp,
             shape = RoundedCornerShape(40.dp),
             modifier = Modifier
-                .requiredHeight(50.dp)
+                .requiredHeight(40.dp)
                 .padding(horizontal = 6.dp)
                 .fillMaxWidth()
         ) {
             TextField(
                 value = searchValue,
+                textStyle = MaterialTheme.typography.body2,
                 onValueChange = onSearchChanged,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .requiredHeight(50.dp),
                 placeholder = {
                     Text(
                         stringResource(id = R.string.search_label),
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.fillMaxHeight()
                     )
                 },
                 colors = TextFieldDefaults.transparent,
@@ -71,13 +78,17 @@ fun SearchTopAppBar(
                     DropdownMenu(
                         expanded = menuExpanded.value,
                         onDismissRequest = { menuExpanded.value = false },
-                        offset = DpOffset((20).dp,(-40).dp),
+                        offset = DpOffset((20).dp, (-40).dp),
                         modifier = Modifier.width(170.dp)
                     ) {
-                        DropdownMenuItem(onClick = { menuExpanded.value = false; onAddContactClick() }) {
+                        DropdownMenuItem(onClick = {
+                            menuExpanded.value = false; onAddContactClick()
+                        }) {
                             Text(text = stringResource(id = R.string.add_contact))
                         }
-                        DropdownMenuItem(onClick = { menuExpanded.value = false; onOpenSettingsClick() }) {
+                        DropdownMenuItem(onClick = {
+                            menuExpanded.value = false; onOpenSettingsClick()
+                        }) {
                             Text(text = stringResource(id = R.string.settings))
                         }
                     }
@@ -90,5 +101,21 @@ fun SearchTopAppBar(
             )
         }
 
+    }
+}
+
+
+@Preview
+@Composable
+fun SearchPreview() {
+    HangoutsTheme(true) {
+        Scaffold(
+            topBar = {
+                SearchTopAppBar("", {})
+            },
+            backgroundColor = MaterialTheme.colors.background
+        ) {
+
+        }
     }
 }
