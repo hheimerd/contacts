@@ -1,4 +1,4 @@
-package com.hheimerd.hangouts
+package com.hheimerd.hangouts.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

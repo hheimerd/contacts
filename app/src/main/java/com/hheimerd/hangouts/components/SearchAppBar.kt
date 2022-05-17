@@ -45,7 +45,7 @@ fun SearchTopAppBar(
             elevation = 4.dp,
             shape = RoundedCornerShape(40.dp),
             modifier = Modifier
-                .requiredHeight(40.dp)
+                .requiredHeight(45.dp)
                 .padding(horizontal = 6.dp)
                 .fillMaxWidth()
         ) {

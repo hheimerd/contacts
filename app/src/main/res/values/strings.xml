@@ -1,4 +1,5 @@
 <resources>
+    <!-- MainScreen -->
     <string name="app_name">Hangouts</string>
     <string name="search">Search</string>
     <string name="search_label">Search contacts</string>
@@ -6,4 +7,9 @@
     <string name="add_contact">Add contact</string>
     <string name="settings">Settings</string>
     <string name="create_contact">Create new contact</string>
+
+    <!-- CreateContactScreen -->
+    <string name="create_contact_title">Create contact</string>
+    <string name="create_contact_save">Save</string>
+    <string name="create_contact_add_photo">Add photo</string>
 </resources>

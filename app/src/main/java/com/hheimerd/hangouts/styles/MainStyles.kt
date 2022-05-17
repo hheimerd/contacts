@@ -19,6 +19,11 @@ val TextFieldDefaults.transparent
     disabledIndicatorColor = Color.Transparent
 );
 
+val paddingXs = 8.dp
+val paddingSm = 16.dp
+val paddingMd = 24.dp
+val paddingLg = 32.dp
+
 fun Modifier.avatarSize(): Modifier {
     return this
         .size(50.dp)

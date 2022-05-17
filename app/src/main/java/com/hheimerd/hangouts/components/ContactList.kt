@@ -22,9 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.models.Contact
+import com.hheimerd.hangouts.screens.testContact
 import com.hheimerd.hangouts.styles.avatarSize
 import com.hheimerd.hangouts.styles.avatarSpace
-import com.hheimerd.hangouts.testContact
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
 import com.hheimerd.hangouts.utils.rememberColorByString
