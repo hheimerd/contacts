@@ -30,8 +30,8 @@ import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 fun SearchTopAppBar(
     searchValue: String,
     onSearchChanged: ActionWith<String>,
-    onAddContactClick: Action = {},
-    onOpenSettingsClick: Action = {}
+    onAddContactClick: Action,
+    onOpenSettingsClick: Action
 ) {
     val menuExpanded = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -111,11 +111,11 @@ fun SearchPreview() {
     HangoutsTheme(true) {
         Scaffold(
             topBar = {
-                SearchTopAppBar("", {})
+                SearchTopAppBar("", {}, {}, {})
             },
             backgroundColor = MaterialTheme.colors.background
-        ) {
-
+        ) {it ->
+            it
         }
     }
 }

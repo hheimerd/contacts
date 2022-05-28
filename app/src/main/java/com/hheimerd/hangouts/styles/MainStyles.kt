@@ -1,8 +1,6 @@
 package com.hheimerd.hangouts.styles
 
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -29,6 +27,7 @@ fun Modifier.avatarSize(): Modifier {
         .size(50.dp)
         .requiredSize(40.dp)
 }
+
 
 fun Modifier.avatarSpace(): Modifier {
     return this.width(14.dp)

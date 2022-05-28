@@ -18,7 +18,7 @@ class ContactsViewModel @Inject constructor(private val contactsRepository: Cont
         return contactsRepository.getAll(limit, offset)
     }
 
-    fun getById(id: String): Flow<Contact> {
+    fun getContactById(id: String): Flow<Contact> {
         return contactsRepository.getById(id)
     }
 

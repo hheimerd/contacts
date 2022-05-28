@@ -1,9 +1,6 @@
 package com.hheimerd.hangouts.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.hheimerd.hangouts.R
@@ -14,19 +11,23 @@ import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 import com.hheimerd.hangouts.viewModels.ContactsViewModel
 
 @Composable
-fun CreateContactScreen(
+fun EditContactScreen(
     contactsViewModel: ContactsViewModel,
+    contactId: String,
     onOpenSettingsClick: Action,
-    onCreated: ActionWith<Contact>,
+    onUpdated: ActionWith<Contact>,
     onClose: Action,
     modifier: Modifier = Modifier
 ) {
+    val contact = contactsViewModel.getContactById(contactId).collectAsState(initial = Contact("",""))
+
     EditContact(
-        onSave = { contact ->
-            contactsViewModel.createContact(
-                contact,
-                onSuccess = { onCreated(contact) })
+        onSave = { updated ->
+            contactsViewModel.updateContact(
+                updated,
+                onSuccess = { onUpdated(updated) })
         },
+        initialValue = contact.value,
         title = stringResource(id = R.string.create_contact_title),
         onOpenSettingsClick = onOpenSettingsClick,
         onClose = onClose,

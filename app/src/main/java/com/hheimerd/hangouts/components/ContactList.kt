@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Colors
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -16,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,9 +34,9 @@ import java.util.*
 @Composable
 fun ContactsListView(
     contacts: Map<Char, List<Contact>>,
-    modifier: Modifier = Modifier,
-    onContactClick: ActionWith<Contact> = {},
-    onCreateContactClick: Action = {}
+    onContactClick: ActionWith<Contact>,
+    onCreateContactClick: Action,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp).then(modifier)) {
         item {
@@ -98,7 +96,7 @@ fun ContactsListView(
 
 @Composable
 fun ContactListItem(contact: Contact, modifier: Modifier = Modifier) {
-    val color = rememberColorByString(contact.name)
+    val color = rememberColorByString(contact.firstName)
 
     Row(
         modifier = Modifier
@@ -110,12 +108,12 @@ fun ContactListItem(contact: Contact, modifier: Modifier = Modifier) {
     ) {
         contact.run {
             if (imageUri.isNullOrEmpty())
-                AvatarDefault(contact.name.first(), color)
+                AvatarDefault(contact.firstName.first(), color)
             else
-                Avatar(imageUri = imageUri, name)
+                Avatar(imageUri = imageUri, firstName)
             Spacer(modifier = Modifier.avatarSpace())
             Text(
-                "$name $secondName",
+                "$firstName $lastName",
                 style = MaterialTheme.typography.body1
             )
         }
@@ -127,18 +125,18 @@ fun ContactListItem(contact: Contact, modifier: Modifier = Modifier) {
 fun PreviewMainScreenContent() {
     val contacts = List(25) {
         testContact.copy(
-            name = getRandomString((6..10).random()),
+            firstName = getRandomString((6..10).random()),
             id = UUID.randomUUID().toString()
         )
     }
 
     val grouped = remember(contacts) {
         contacts
-            .groupBy { it.name.first().uppercaseChar() }
+            .groupBy { it.firstName.first().uppercaseChar() }
             .toSortedMap()
     }
     HangoutsTheme(false) {
-        ContactsListView(grouped)
+        ContactsListView(grouped, onContactClick = {}, onCreateContactClick =  {})
     }
 }
 

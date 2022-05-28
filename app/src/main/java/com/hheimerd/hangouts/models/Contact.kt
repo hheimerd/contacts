@@ -9,8 +9,10 @@ import java.util.*
 @Entity(tableName = Contact.TABLE_NAME)
 data class Contact(
     val phone: String,
-    val name: String,
-    val secondName: String,
+    val firstName: String,
+    val lastName: String = "",
+    val email: String = "",
+    val nickname: String = "",
 
     val imageUri: String? = null,
 
