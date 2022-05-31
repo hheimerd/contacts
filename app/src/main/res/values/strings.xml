@@ -17,4 +17,6 @@
     <string name="email">Email</string>
     <string name="nickname">Nickname</string>
     <string name="close">Close</string>
+    <string name="required_fields_error_message">Fill all required fields</string>
+    <string name="change_photo">Change photo</string>
 </resources>

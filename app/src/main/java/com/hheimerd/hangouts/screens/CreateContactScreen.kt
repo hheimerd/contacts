@@ -27,6 +27,7 @@ fun CreateContactScreen(
                 contact,
                 onSuccess = { onCreated(contact) })
         },
+        initialValue = Contact("", ""),
         title = stringResource(id = R.string.create_contact_title),
         onOpenSettingsClick = onOpenSettingsClick,
         onClose = onClose,

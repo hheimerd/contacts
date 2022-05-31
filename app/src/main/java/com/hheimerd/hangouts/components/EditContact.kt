@@ -1,12 +1,19 @@
 package com.hheimerd.hangouts.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import android.Manifest
+import android.content.ContentResolver
+import android.content.Intent
+import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -19,26 +26,38 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.models.Contact
+import com.hheimerd.hangouts.styles.avatarSize
 import com.hheimerd.hangouts.styles.paddingSm
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
+import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.typeUtils.Action
 import com.hheimerd.hangouts.utils.typeUtils.ActionWith
+import java.util.*
 
 
 @Composable
 fun EditContact(
     onSave: ActionWith<Contact>,
-    initialValue: Contact = Contact("", ""),
+    initialValue: Contact,
     title: String,
     onOpenSettingsClick: Action,
     onClose: Action,
@@ -52,25 +71,42 @@ fun EditContact(
     var nickname: String by rememberSaveable { mutableStateOf(initialValue.nickname) }
     var imageUri: String? by rememberSaveable { mutableStateOf(initialValue.imageUri) }
 
+    var showErrors: Boolean by rememberSaveable { mutableStateOf(false) }
+    val emptyFieldsError = stringResource(id = R.string.required_fields_error_message)
+
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
+    val cameraActivity = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(), onResult = { bitmap ->
+            if (bitmap == null)
+                return@rememberLauncherForActivityResult
+
+            val uri = UUID.randomUUID().toString()
+            if (InternalStorage.savePhoto(context, uri, bitmap)) {
+                Log.d("imageUri",uri.toString())
+                imageUri = uri
+            }
+        }
+    )
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            CreateContactTopAppBar(
+            SaveTopAppBar(
                 onOpenSettingsClick = onOpenSettingsClick,
                 title = title,
                 onCloseClicked = onClose,
                 onSaveClicked = {
-                    onSave(
-                        Contact(
-                            phone,
-                            firstName,
-                            lastName,
-                            email,
-                            nickname,
-                            imageUri
+                    if (firstName.isEmpty() || phone.isEmpty()) {
+                        Toast.makeText(context, emptyFieldsError, Toast.LENGTH_LONG).show()
+                        focusManager.clearFocus()
+                        showErrors = true
+                    } else {
+                        onSave(
+                            Contact(phone, firstName, lastName, email, nickname, imageUri)
                         )
-                    )
+                    }
                 }
             )
         },
@@ -86,20 +122,28 @@ fun EditContact(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = paddingSm)
+                        .clickable {
+                            cameraActivity.launch(null)
+                        }
                 ) {
                     val secondary = MaterialTheme.colors.secondary;
-                    Icon(
-                        Icons.Outlined.Add,
-                        contentDescription = stringResource(R.string.add_photo),
-                        Modifier
-                            .size(50.dp)
-                            .drawBehind {
-                                drawCircle(secondary)
-                            }
-                            .padding(15.dp)
-                    )
+                    if (imageUri != null) {
+                        Avatar(imageUri = imageUri!!, modifier = Modifier.size(50.dp))
+                    } else {
+                        Icon(
+                            Icons.Outlined.Add,
+                            contentDescription = stringResource(R.string.add_photo),
+                            Modifier
+                                .size(50.dp)
+                                .drawBehind {
+                                    drawCircle(secondary)
+                                }
+                                .padding(15.dp)
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(5.dp))
-                    Text(stringResource(id = R.string.add_photo))
+                    Text(stringResource(id = if(imageUri == null) R.string.add_photo else R.string.change_photo))
                 }
 
                 Column(
@@ -107,40 +151,69 @@ fun EditContact(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    OutlinedTextFieldWithIcon(
-                        value = firstName,
-                        onValueChange = { value -> firstName = value },
-                        placeholderText = stringResource(R.string.firstName),
-                        Icons.Outlined.Person
-                    )
+                    IconBefore(
+                        icon = Icons.Outlined.Person
+                    ) {
+                        OutlinedTextField(
+                            value = firstName,
+                            onValueChange = { value -> firstName = value },
+                            label = { Text(stringResource(R.string.firstName)) },
+                            singleLine = true,
+                            isError = showErrors && firstName.isEmpty(),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+
+                        )
+                    }
 
                     OutlinedTextField(value = lastName,
                         onValueChange = { value -> lastName = value },
-                        placeholder = { Text(stringResource(R.string.lastName)) }
+                        label = { Text(stringResource(R.string.lastName)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+
                     )
 
-                    OutlinedTextFieldWithIcon(
-                        value = phone,
-                        onValueChange = { value -> phone = value },
-                        placeholderText = stringResource(R.string.phone),
-                        icon = Icons.Outlined.Phone,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-                    )
+                    IconBefore(
+                        icon = Icons.Outlined.Phone
 
-                    OutlinedTextFieldWithIcon(
-                        value = email,
-                        onValueChange = { value -> email = value },
-                        placeholderText = stringResource(R.string.email),
-                        icon = Icons.Outlined.Email,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-                    )
+                    ) {
+                        OutlinedTextField(
+                            value = phone,
+                            onValueChange = { value -> phone = value },
+                            label = { Text(stringResource(R.string.phone)) },
+                            singleLine = true,
+                            isError = showErrors && phone.isEmpty(),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Phone),
+                        )
+                    }
 
-                    OutlinedTextFieldWithIcon(
-                        value = nickname,
-                        onValueChange = { value -> nickname = value },
-                        placeholderText = stringResource(R.string.nickname),
+                    IconBefore(
+                        icon = Icons.Outlined.Email
+                    ) {
+                        OutlinedTextField(
+                            value = email,
+                            onValueChange = { value -> email = value },
+                            label = { Text(stringResource(R.string.email)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+
+                        )
+                    }
+
+                    IconBefore(
                         icon = ImageVector.vectorResource(id = R.drawable.logo_42)
-                    )
+                    ) {
+                        OutlinedTextField(
+                            value = nickname,
+                            onValueChange = { value -> nickname = value },
+                            label = { Text(stringResource(R.string.nickname)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                focusManager.clearFocus()
+                            })
+                        )
+                    }
                 }
             }
         }
@@ -148,12 +221,9 @@ fun EditContact(
 }
 
 @Composable
-fun OutlinedTextFieldWithIcon(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholderText: String,
+fun IconBefore(
     icon: ImageVector,
-    keyboardOptions: KeyboardOptions = KeyboardOptions()
+    content: @Composable () -> Unit
 ) {
     Row {
         Icon(
@@ -161,20 +231,15 @@ fun OutlinedTextFieldWithIcon(
             Modifier
                 .width(0.dp)
                 .requiredSize(25.dp)
-                .offset((-30).dp, 13.dp)
+                .offset((-30).dp, 25.dp)
         )
 
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            placeholder = { Text(placeholderText) },
-            keyboardOptions = keyboardOptions
-        )
+        content()
     }
 }
 
 @Composable
-fun CreateContactTopAppBar(
+fun SaveTopAppBar(
     title: String,
     onOpenSettingsClick: Action,
     onCloseClicked: Action,
@@ -238,6 +303,7 @@ fun PreviewEditContactScreen() {
     HangoutsTheme(true) {
         EditContact(
             {},
+            initialValue = Contact("", ""),
             title = "Edit contact",
             onOpenSettingsClick = {},
             onClose = {},
