@@ -70,8 +70,7 @@ class MainActivity : ComponentActivity() {
 
                         MainScreen(
                             viewModel,
-                            onOpenSettingsClick = { navController.navigate(Routes.Settings) },
-                            onAddContactClick = { navController.navigate(Routes.Create) },)
+                            onOpenSettingsClick = { navController.navigate(Routes.Settings) })
                     }
                     composable("${Routes.Home}/?contactId={contactId}", arguments = listOf(
                         navArgument("contactId") {
@@ -86,8 +85,7 @@ class MainActivity : ComponentActivity() {
                         MainScreen(
                             viewModel,
                             onOpenSettingsClick = { navController.navigate(Routes.Settings) },
-                            initialContactId = contactId,
-                            onAddContactClick = { navController.navigate(Routes.Create) },)
+                            initialContactId = contactId)
                     }
                     composable("${Routes.Edit}/{contactId}") { navEntry ->
                         val contactId = navEntry.arguments?.getString("contactId")

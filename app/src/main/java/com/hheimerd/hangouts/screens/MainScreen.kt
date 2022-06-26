@@ -13,17 +13,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hheimerd.hangouts.viewModels.ContactsViewModel
 import com.hheimerd.hangouts.components.ContactsListView
 import com.hheimerd.hangouts.components.SearchTopAppBar
+import com.hheimerd.hangouts.events.ContactEvent
 import com.hheimerd.hangouts.models.Contact
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
 import com.hheimerd.hangouts.utils.typeUtils.Action
+import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 import java.util.*
 
 
 @Composable
 fun MainScreen(
     viewModel: ContactsViewModel,
-    onAddContactClick: Action,
     onOpenSettingsClick: Action,
     modifier: Modifier = Modifier,
     initialContactId: String? = null
@@ -33,7 +34,7 @@ fun MainScreen(
 
     MainScreenContent(
         contacts,
-        onAddContactClick,
+        viewModel::onEvent,
         onOpenSettingsClick,
         modifier = modifier,
         initialOpenedContact = initialContact.value,
@@ -43,7 +44,7 @@ fun MainScreen(
 @Composable
 fun MainScreenContent(
     contacts: List<Contact>,
-    onCreateContactClick: Action,
+    onContactEvent: ActionWith<ContactEvent>,
     onOpenSettingsClick: Action,
     modifier: Modifier = Modifier,
     initialOpenedContact: Contact? = null
@@ -69,7 +70,7 @@ fun MainScreenContent(
             SearchTopAppBar(
                 searchValue.value,
                 onSearchChanged = { searchValue.value = it },
-                onAddContactClick = onCreateContactClick,
+                onAddContactClick = {onContactEvent(ContactEvent.Create)},
                 onOpenSettingsClick = onOpenSettingsClick
             )
         },
@@ -78,8 +79,7 @@ fun MainScreenContent(
         content = {
             ContactsListView(
                 grouped,
-                onCreateContactClick = onCreateContactClick,
-                onContactClick = { clicked -> openedContact = clicked },
+                onContactEvent = onContactEvent,
                 modifier = modifier
                     .padding(it),
             )

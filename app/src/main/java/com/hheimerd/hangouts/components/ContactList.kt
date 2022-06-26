@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
+import com.hheimerd.hangouts.events.ContactEvent
 import com.hheimerd.hangouts.models.Contact
 import com.hheimerd.hangouts.screens.testContact
 import com.hheimerd.hangouts.styles.avatarSize
@@ -34,8 +35,7 @@ import java.util.*
 @Composable
 fun ContactsListView(
     contacts: Map<Char, List<Contact>>,
-    onContactClick: ActionWith<Contact>,
-    onCreateContactClick: Action,
+    onContactEvent: ActionWith<ContactEvent>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp).then(modifier)) {
@@ -43,7 +43,7 @@ fun ContactsListView(
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 50.dp, end = 10.dp)
-                .clickable { onCreateContactClick() }
+                .clickable { onContactEvent(ContactEvent.Create) }
                 .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -86,7 +86,7 @@ fun ContactsListView(
                 ContactListItem(
                     contact = it, modifier = Modifier
                         .padding(start = 50.dp, end = 10.dp)
-                        .clickable { onContactClick(it) }
+                        .clickable { ContactEvent.Open(it) }
                         .padding(horizontal = 20.dp)
                 )
             }
@@ -136,7 +136,7 @@ fun PreviewMainScreenContent() {
             .toSortedMap()
     }
     HangoutsTheme(false) {
-        ContactsListView(grouped, onContactClick = {}, onCreateContactClick =  {})
+        ContactsListView(grouped, {})
     }
 }
 

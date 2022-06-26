@@ -2,6 +2,7 @@ package com.hheimerd.hangouts.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hheimerd.hangouts.events.ContactEvent
 import com.hheimerd.hangouts.models.Contact
 import com.hheimerd.hangouts.repository.contacts.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,15 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactsViewModel @Inject constructor(private val contactsRepository: ContactRepository) :
     ViewModel() {
+
+    fun onEvent(event: ContactEvent) {
+        when (event) {
+            ContactEvent.Create -> TODO()
+            is ContactEvent.Delete -> TODO()
+            is ContactEvent.Open -> TODO()
+            is ContactEvent.Update -> TODO()
+        }
+    }
 
     fun getAllContacts(limit: Int = 15, offset: Int = 0): Flow<List<Contact>> {
         return contactsRepository.getAll(limit, offset)
