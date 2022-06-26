@@ -9,9 +9,7 @@ interface ContactRepository {
 
     fun getById(id: String): Flow<Contact>
 
-    suspend fun create(contact: Contact)
-
-    suspend fun update(contact: Contact)
+    suspend fun insert(contact: Contact)
 
     suspend fun delete(contact: Contact)
 }

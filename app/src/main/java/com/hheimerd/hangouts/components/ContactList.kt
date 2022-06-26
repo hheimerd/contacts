@@ -27,7 +27,6 @@ import com.hheimerd.hangouts.styles.avatarSpace
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
 import com.hheimerd.hangouts.utils.rememberColorByString
-import com.hheimerd.hangouts.utils.typeUtils.Action
 import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 import java.util.*
 
@@ -43,7 +42,7 @@ fun ContactsListView(
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 50.dp, end = 10.dp)
-                .clickable { onContactEvent(ContactEvent.Create) }
+                .clickable { onContactEvent(ContactEvent.Add) }
                 .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

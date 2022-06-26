@@ -15,12 +15,8 @@ class RoomContactRepository @Inject constructor(private val contactDao: ContactD
         return contactDao.getById(id);
     }
 
-    override suspend fun create(contact: Contact) {
-        contactDao.create(contact)
-    }
-
-    override suspend fun update(contact: Contact) {
-        contactDao.update(contact)
+    override suspend fun insert(contact: Contact) {
+        contactDao.insert(contact)
     }
 
     override suspend fun delete(contact: Contact) {

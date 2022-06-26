@@ -9,11 +9,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ContactDao {
 
-    @Insert
-    suspend fun create(contact: Contact)
-
-    @Update
-    suspend fun update(contact: Contact)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(contact: Contact)
 
     @Delete
     suspend fun delete(contact: Contact)

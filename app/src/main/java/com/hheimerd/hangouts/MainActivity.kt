@@ -12,14 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.compose.runtime.getValue;
-import androidx.compose.runtime.setValue;
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.navigation.Routes
 import com.hheimerd.hangouts.screens.CreateContactScreen
 import com.hheimerd.hangouts.screens.EditContactScreen
@@ -27,10 +27,21 @@ import com.hheimerd.hangouts.screens.MainScreen
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.viewModels.ContactsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import kotlinx.coroutines.flow.collect
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private var navController: NavHostController? = null;
+
+    fun onUiEvent(event: UiEvent) {
+        when (event) {
+            is UiEvent.Navigate -> navController?.navigate(event.routeString)
+            UiEvent.PopBack -> navController?.popBackStack()
+            is UiEvent.ShowSnackbar -> TODO()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +52,9 @@ class MainActivity : ComponentActivity() {
             val systemUiController = rememberSystemUiController()
             val darkTheme = isSystemInDarkTheme()
             val navController = rememberNavController()
+            val viewModel: ContactsViewModel = hiltViewModel()
+
+            this.navController = navController;
 
             SideEffect {
                 if (darkTheme) {
@@ -48,6 +62,11 @@ class MainActivity : ComponentActivity() {
                 } else {
                     systemUiController.setSystemBarsColor(Color.White)
                 }
+            }
+
+
+            LaunchedEffect(true) {
+                viewModel.uiEvent.collect(::onUiEvent)
             }
 
 
@@ -66,7 +85,6 @@ class MainActivity : ComponentActivity() {
                         )
                 ) {
                     composable(Routes.Home) {
-                        val viewModel: ContactsViewModel = hiltViewModel()
 
                         MainScreen(
                             viewModel,
@@ -80,8 +98,6 @@ class MainActivity : ComponentActivity() {
                     )) { navEntry ->
                         val contactId = navEntry.arguments?.getString("contactId")
 
-                        val viewModel: ContactsViewModel = hiltViewModel()
-
                         MainScreen(
                             viewModel,
                             onOpenSettingsClick = { navController.navigate(Routes.Settings) },
@@ -92,28 +108,18 @@ class MainActivity : ComponentActivity() {
                         if (contactId == null)
                             navController.navigate(Routes.Home)
                         else {
-                            val viewModel: ContactsViewModel = hiltViewModel()
                             EditContactScreen(
                                 viewModel,
                                 contactId = contactId,
-                                onOpenSettingsClick = { navController.navigate(Routes.Settings) },
-                                onUpdated = {
-                                    navController.navigate("${Routes.Home}/?contactId=${it.id}")
-                                },
-                                onClose = { navController.popBackStack() },
+                                onUiEvent = ::onUiEvent
                             )
                         }
                     }
 
                     composable(Routes.Create) {
-                        val viewModel: ContactsViewModel = hiltViewModel()
                         CreateContactScreen(
                             viewModel,
-                            onOpenSettingsClick = { navController.navigate(Routes.Settings) },
-                            onCreated = {
-                                navController.navigate("${Routes.Home}/?contactId=${it.id}")
-                            },
-                            onClose = { navController.popBackStack() },
+                            onUiEvent = ::onUiEvent
                         );
                     }
                 }

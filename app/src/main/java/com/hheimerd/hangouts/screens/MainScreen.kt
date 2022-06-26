@@ -1,6 +1,5 @@
 package com.hheimerd.hangouts.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -9,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hheimerd.hangouts.viewModels.ContactsViewModel
 import com.hheimerd.hangouts.components.ContactsListView
 import com.hheimerd.hangouts.components.SearchTopAppBar
@@ -70,7 +68,7 @@ fun MainScreenContent(
             SearchTopAppBar(
                 searchValue.value,
                 onSearchChanged = { searchValue.value = it },
-                onAddContactClick = {onContactEvent(ContactEvent.Create)},
+                onAddContactClick = {onContactEvent(ContactEvent.Add)},
                 onOpenSettingsClick = onOpenSettingsClick
             )
         },
