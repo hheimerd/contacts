@@ -9,6 +9,7 @@
     <string name="create_contact">Create new contact</string>
 
     <string name="create_contact_title">Create contact</string>
+    <string name="edit_contact_title">Edit contact</string>
     <string name="save">Save</string>
     <string name="add_photo">Add photo</string>
     <string name="firstName">First name</string>
@@ -19,4 +20,6 @@
     <string name="close">Close</string>
     <string name="required_fields_error_message">Fill all required fields</string>
     <string name="change_photo">Change photo</string>
+    <string name="phone_cant_be_empty">Phone can\'t be empty</string>
+    <string name="name_cant_be_empty">Name can\'t be empty</string>
 </resources>

@@ -1,7 +1,7 @@
-package com.hheimerd.hangouts.repository.contacts.room
+package com.hheimerd.hangouts.data.repository.contacts.room
 
-import com.hheimerd.hangouts.models.Contact
-import com.hheimerd.hangouts.repository.contacts.ContactRepository
+import com.hheimerd.hangouts.data.models.Contact
+import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

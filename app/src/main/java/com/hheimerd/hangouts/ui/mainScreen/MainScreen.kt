@@ -8,48 +8,42 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hheimerd.hangouts.viewModels.ContactsViewModel
+import com.hheimerd.hangouts.ui.mainScreen.MainScreenViewModel
 import com.hheimerd.hangouts.components.ContactsListView
 import com.hheimerd.hangouts.components.SearchTopAppBar
-import com.hheimerd.hangouts.events.ContactEvent
-import com.hheimerd.hangouts.models.Contact
+import com.hheimerd.hangouts.ui.mainScreen.MainViewEvent
+import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
-import com.hheimerd.hangouts.utils.typeUtils.Action
 import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 import java.util.*
 
 
 @Composable
 fun MainScreen(
-    viewModel: ContactsViewModel,
-    onOpenSettingsClick: Action,
+    viewModel: MainScreenViewModel,
     modifier: Modifier = Modifier,
-    initialContactId: String? = null
 ) {
     val contacts = viewModel.getAllContacts().collectAsState(listOf()).value
-    val initialContact = viewModel.getContactById(initialContactId ?: "").collectAsState(null)
+    val initialContact = viewModel.openedContact
 
     MainScreenContent(
         contacts,
         viewModel::onEvent,
-        onOpenSettingsClick,
         modifier = modifier,
-        initialOpenedContact = initialContact.value,
+        openedContact = initialContact,
     )
 }
 
 @Composable
 fun MainScreenContent(
     contacts: List<Contact>,
-    onContactEvent: ActionWith<ContactEvent>,
-    onOpenSettingsClick: Action,
+    onMainViewEvent: ActionWith<MainViewEvent>,
     modifier: Modifier = Modifier,
-    initialOpenedContact: Contact? = null
+    openedContact: Contact? = null
 ) {
     val scaffoldState = rememberScaffoldState()
     val searchValue = rememberSaveable { mutableStateOf("") }
-    var openedContact by remember { mutableStateOf(initialOpenedContact) }
     val grouped = remember(contacts, searchValue.value) {
         contacts
             .filter {
@@ -68,8 +62,8 @@ fun MainScreenContent(
             SearchTopAppBar(
                 searchValue.value,
                 onSearchChanged = { searchValue.value = it },
-                onAddContactClick = {onContactEvent(ContactEvent.Add)},
-                onOpenSettingsClick = onOpenSettingsClick
+                onAddContactClick = {onMainViewEvent(MainViewEvent.AddContactClick)},
+                onOpenSettingsClick = {onMainViewEvent(MainViewEvent.OpenSettings)}
             )
         },
         backgroundColor = MaterialTheme.colors.background,
@@ -77,7 +71,7 @@ fun MainScreenContent(
         content = {
             ContactsListView(
                 grouped,
-                onContactEvent = onContactEvent,
+                onMainViewEvent = onMainViewEvent,
                 modifier = modifier
                     .padding(it),
             )
@@ -100,6 +94,6 @@ fun PreviewMainScreenContent() {
     }
 
     HangoutsTheme(true) {
-        MainScreenContent(contacts, {}, {})
+        MainScreenContent(contacts, {})
     }
 }

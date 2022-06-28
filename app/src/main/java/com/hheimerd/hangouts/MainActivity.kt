@@ -21,13 +21,13 @@ import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.navigation.Routes
-import com.hheimerd.hangouts.screens.CreateContactScreen
-import com.hheimerd.hangouts.screens.EditContactScreen
+import com.hheimerd.hangouts.navigation.Routes.Companion.contactIdParam
+import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactScreen
 import com.hheimerd.hangouts.screens.MainScreen
+import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactViewModel
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
-import com.hheimerd.hangouts.viewModels.ContactsViewModel
+import com.hheimerd.hangouts.ui.mainScreen.MainScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
         when (event) {
             is UiEvent.Navigate -> navController?.navigate(event.routeString)
             UiEvent.PopBack -> navController?.popBackStack()
-            is UiEvent.ShowSnackbar -> TODO()
         }
     }
 
@@ -52,9 +51,15 @@ class MainActivity : ComponentActivity() {
             val systemUiController = rememberSystemUiController()
             val darkTheme = isSystemInDarkTheme()
             val navController = rememberNavController()
-            val viewModel: ContactsViewModel = hiltViewModel()
 
-            this.navController = navController;
+            this.navController = navController
+
+            val contactIdParamArg = listOf(
+                navArgument(contactIdParam) {
+                    type = NavType.StringType;
+                    nullable = true
+                }
+            )
 
             SideEffect {
                 if (darkTheme) {
@@ -63,12 +68,6 @@ class MainActivity : ComponentActivity() {
                     systemUiController.setSystemBarsColor(Color.White)
                 }
             }
-
-
-            LaunchedEffect(true) {
-                viewModel.uiEvent.collect(::onUiEvent)
-            }
-
 
             HangoutsTheme {
                 NavHost(
@@ -81,47 +80,33 @@ class MainActivity : ComponentActivity() {
                         .windowInsetsPadding(
                             WindowInsets
                                 .navigationBars
-                                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                         )
                 ) {
                     composable(Routes.Home) {
-
-                        MainScreen(
-                            viewModel,
-                            onOpenSettingsClick = { navController.navigate(Routes.Settings) })
-                    }
-                    composable("${Routes.Home}/?contactId={contactId}", arguments = listOf(
-                        navArgument("contactId") {
-                            type = NavType.StringType;
-                            nullable = true
+                        val viewModel: MainScreenViewModel = hiltViewModel()
+                        LaunchedEffect(true) {
+                            viewModel.uiEvent.collect(::onUiEvent)
                         }
-                    )) { navEntry ->
-                        val contactId = navEntry.arguments?.getString("contactId")
-
-                        MainScreen(
-                            viewModel,
-                            onOpenSettingsClick = { navController.navigate(Routes.Settings) },
-                            initialContactId = contactId)
+                        MainScreen(viewModel)
                     }
-                    composable("${Routes.Edit}/{contactId}") { navEntry ->
-                        val contactId = navEntry.arguments?.getString("contactId")
-                        if (contactId == null)
-                            navController.navigate(Routes.Home)
-                        else {
-                            EditContactScreen(
-                                viewModel,
-                                contactId = contactId,
-                                onUiEvent = ::onUiEvent
-                            )
+                    composable("${Routes.Home}/?${contactIdParam}={${contactIdParam}}", contactIdParamArg) { navEntry ->
+                        val viewModel: MainScreenViewModel = hiltViewModel()
+                        LaunchedEffect(true) {
+                            viewModel.uiEvent.collect(::onUiEvent)
                         }
+
+                        MainScreen(viewModel)
+                    }
+                    composable(Routes.AddEditContact, contactIdParamArg) { navEntry ->
+                        val viewModel: AddEditContactViewModel = hiltViewModel()
+                        LaunchedEffect(true) {
+                            viewModel.uiEvent.collect(::onUiEvent)
+                        }
+                        AddEditContactScreen(
+                            viewModel,
+                        )
                     }
 
-                    composable(Routes.Create) {
-                        CreateContactScreen(
-                            viewModel,
-                            onUiEvent = ::onUiEvent
-                        );
-                    }
                 }
             }
         }

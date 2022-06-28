@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.models.Contact
-import com.hheimerd.hangouts.styles.avatarSize
+import com.hheimerd.hangouts.data.models.Contact
+import com.hheimerd.hangouts.ui.styles.avatarSize
 import com.hheimerd.hangouts.utils.InternalStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

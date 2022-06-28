@@ -1,6 +1,6 @@
-package com.hheimerd.hangouts.repository.contacts
+package com.hheimerd.hangouts.data.repository.contacts
 
-import com.hheimerd.hangouts.models.Contact
+import com.hheimerd.hangouts.data.models.Contact
 import kotlinx.coroutines.flow.Flow
 
 interface ContactRepository {

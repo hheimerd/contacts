@@ -1,4 +1,4 @@
-package com.hheimerd.hangouts.models
+package com.hheimerd.hangouts.data.models
 
 import androidx.compose.ui.graphics.Color
 import androidx.room.Entity

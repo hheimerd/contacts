@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.styles.transparent
+import com.hheimerd.hangouts.ui.styles.transparent
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.typeUtils.Action
 import com.hheimerd.hangouts.utils.typeUtils.ActionWith

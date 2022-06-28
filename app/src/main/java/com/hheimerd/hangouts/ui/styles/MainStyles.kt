@@ -1,4 +1,4 @@
-package com.hheimerd.hangouts.styles
+package com.hheimerd.hangouts.ui.styles
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.TextFieldColors

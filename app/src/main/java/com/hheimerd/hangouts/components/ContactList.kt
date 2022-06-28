@@ -19,11 +19,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.events.ContactEvent
-import com.hheimerd.hangouts.models.Contact
+import com.hheimerd.hangouts.ui.mainScreen.MainViewEvent
+import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.screens.testContact
-import com.hheimerd.hangouts.styles.avatarSize
-import com.hheimerd.hangouts.styles.avatarSpace
+import com.hheimerd.hangouts.ui.styles.avatarSize
+import com.hheimerd.hangouts.ui.styles.avatarSpace
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
 import com.hheimerd.hangouts.utils.rememberColorByString
@@ -34,7 +34,7 @@ import java.util.*
 @Composable
 fun ContactsListView(
     contacts: Map<Char, List<Contact>>,
-    onContactEvent: ActionWith<ContactEvent>,
+    onMainViewEvent: ActionWith<MainViewEvent>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp).then(modifier)) {
@@ -42,7 +42,7 @@ fun ContactsListView(
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 50.dp, end = 10.dp)
-                .clickable { onContactEvent(ContactEvent.Add) }
+                .clickable { onMainViewEvent(MainViewEvent.AddContactClick) }
                 .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -85,8 +85,9 @@ fun ContactsListView(
                 ContactListItem(
                     contact = it, modifier = Modifier
                         .padding(start = 50.dp, end = 10.dp)
-                        .clickable { ContactEvent.Open(it) }
+                        .clickable { MainViewEvent.OpenContact(it) }
                         .padding(horizontal = 20.dp)
+
                 )
             }
         }

@@ -1,16 +1,11 @@
-package com.hheimerd.hangouts.components
+package com.hheimerd.hangouts.ui.add_edit_contact
 
-import android.Manifest
-import android.content.ContentResolver
-import android.content.Intent
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,14 +19,12 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -41,12 +34,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.models.Contact
-import com.hheimerd.hangouts.styles.avatarSize
-import com.hheimerd.hangouts.styles.paddingSm
+import com.hheimerd.hangouts.components.Avatar
+import com.hheimerd.hangouts.data.models.Contact
+import com.hheimerd.hangouts.ui.styles.paddingSm
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.typeUtils.Action
@@ -56,11 +47,10 @@ import java.util.*
 
 @Composable
 fun EditContact(
-    onSave: ActionWith<Contact>,
+    onEvent: ActionWith<AddEditContactEvent>,
     initialValue: Contact,
+    scaffoldState: ScaffoldState,
     title: String,
-    onOpenSettingsClick: Action,
-    onClose: Action,
     modifier: Modifier = Modifier
 ) {
 
@@ -71,8 +61,8 @@ fun EditContact(
     var nickname: String by rememberSaveable { mutableStateOf(initialValue.nickname) }
     var imageUri: String? by rememberSaveable { mutableStateOf(initialValue.imageUri) }
 
+
     var showErrors: Boolean by rememberSaveable { mutableStateOf(false) }
-    val emptyFieldsError = stringResource(id = R.string.required_fields_error_message)
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -84,29 +74,24 @@ fun EditContact(
 
             val uri = UUID.randomUUID().toString()
             if (InternalStorage.savePhoto(context, uri, bitmap)) {
-                Log.d("imageUri",uri.toString())
                 imageUri = uri
             }
         }
     )
 
     Scaffold(
+        scaffoldState = scaffoldState,
         modifier = modifier,
         topBar = {
             SaveTopAppBar(
-                onOpenSettingsClick = onOpenSettingsClick,
+                onOpenSettingsClick = {onEvent(AddEditContactEvent.OnSettingsClick)},
                 title = title,
-                onCloseClicked = onClose,
+                onCloseClicked = {onEvent(AddEditContactEvent.OnCloseButtonClick)},
                 onSaveClicked = {
-                    if (firstName.isEmpty() || phone.isEmpty()) {
-                        Toast.makeText(context, emptyFieldsError, Toast.LENGTH_LONG).show()
-                        focusManager.clearFocus()
-                        showErrors = true
-                    } else {
-                        onSave(
-                            Contact(phone, firstName, lastName, email, nickname, imageUri)
-                        )
-                    }
+                    onEvent(AddEditContactEvent.OnSave(
+                        Contact(phone, firstName, lastName, email, nickname, imageUri)
+                    ))
+                    showErrors = true
                 }
             )
         },
@@ -161,7 +146,6 @@ fun EditContact(
                             singleLine = true,
                             isError = showErrors && firstName.isEmpty(),
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-
                         )
                     }
 
@@ -304,9 +288,8 @@ fun PreviewEditContactScreen() {
         EditContact(
             {},
             initialValue = Contact("", ""),
+            rememberScaffoldState(),
             title = "Edit contact",
-            onOpenSettingsClick = {},
-            onClose = {},
         )
     }
 }

@@ -1,9 +1,9 @@
-package com.hheimerd.hangouts.repository.contacts.room
+package com.hheimerd.hangouts.data.repository.contacts.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.RoomMasterTable.TABLE_NAME
-import com.hheimerd.hangouts.models.Contact
+import com.hheimerd.hangouts.data.models.Contact
 import kotlinx.coroutines.flow.Flow
 
 @Dao
