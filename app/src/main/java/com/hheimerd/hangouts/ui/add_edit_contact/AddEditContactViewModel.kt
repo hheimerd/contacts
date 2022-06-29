@@ -74,7 +74,7 @@ class AddEditContactViewModel @Inject constructor(
             contactsRepository.insert(
                 contact
             )
-            sendUiEvent(UiEvent.Navigate(Routes.Home))
+            sendUiEvent(UiEvent.Navigate(Routes.ContactCard(contact)))
         }
     }
 }

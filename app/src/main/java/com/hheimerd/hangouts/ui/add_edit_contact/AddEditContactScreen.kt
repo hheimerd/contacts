@@ -1,6 +1,7 @@
 package com.hheimerd.hangouts.ui.add_edit_contact
 
-import androidx.compose.material.SnackbarDuration
+import android.os.Debug
+import android.util.Log
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,7 +11,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.events.UiEvent
-import com.hheimerd.hangouts.utils.typeUtils.Action
 
 @Composable
 fun AddEditContactScreen(
@@ -32,11 +32,12 @@ fun AddEditContactScreen(
     }
 
     val titleId =
-        if (contactsViewModel.initialContact == null) R.string.create_contact_title else R.string.edit_contact_title
+        if (contactsViewModel.initialContact == null) R.string.create_contact_title
+        else R.string.edit_contact_title
 
-    EditContact(
+    AddEditContactView(
         contactsViewModel::onEvent,
-        contactsViewModel.initialContact ?: Contact("", ""),
+        contactsViewModel.initialContact,
         scaffoldState,
         title = stringResource(titleId),
         modifier = modifier

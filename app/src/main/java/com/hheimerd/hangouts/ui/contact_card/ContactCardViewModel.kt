@@ -1,0 +1,58 @@
+package com.hheimerd.hangouts.ui.contact_card
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.hheimerd.hangouts.data.models.Contact
+import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
+import com.hheimerd.hangouts.events.UiEvent
+import com.hheimerd.hangouts.navigation.Routes
+import com.hheimerd.hangouts.utils.extensions.runInIOThread
+import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ContactCardViewModel @Inject constructor(
+    private val contactRepository: ContactRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModelWithUiEvent() {
+    var contact by mutableStateOf<Contact?>(null);
+
+    init {
+        val contactId = savedStateHandle.get<String>(Routes.contactIdParam)
+        contactId?.let {
+            viewModelScope.launch {
+                contactRepository.getById(contactId).collect { foundContact ->
+                    contact = foundContact
+                }
+            }
+        }
+    }
+
+
+    fun onEvent(event: ContactCardEvent) {
+        when (event) {
+            ContactCardEvent.BackButtonClicked -> sendUiEvent(UiEvent.PopBack)
+            ContactCardEvent.DeleteContactClick -> {
+                contact?.let {
+                    runInIOThread({ contactRepository.delete(it) }) {
+                        sendUiEvent(UiEvent.Navigate(Routes.Home))
+                    }
+                }
+            }
+            ContactCardEvent.EditContactClick -> {
+                contact?.let {
+                    sendUiEvent(UiEvent.Navigate(Routes.EditContact(it)))
+                }
+            }
+            ContactCardEvent.OpenChatClick -> TODO()
+        }
+    }
+
+}

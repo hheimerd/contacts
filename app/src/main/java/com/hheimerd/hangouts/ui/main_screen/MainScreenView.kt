@@ -1,17 +1,16 @@
 package com.hheimerd.hangouts.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hheimerd.hangouts.ui.mainScreen.MainScreenViewModel
+import androidx.compose.ui.unit.dp
+import com.hheimerd.hangouts.ui.main_screen.MainScreenViewModel
 import com.hheimerd.hangouts.components.ContactsListView
 import com.hheimerd.hangouts.components.SearchTopAppBar
-import com.hheimerd.hangouts.ui.mainScreen.MainViewEvent
+import com.hheimerd.hangouts.ui.main_screen.MainScreenEvent
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
@@ -25,22 +24,19 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     val contacts = viewModel.getAllContacts().collectAsState(listOf()).value
-    val initialContact = viewModel.openedContact
 
     MainScreenContent(
         contacts,
         viewModel::onEvent,
         modifier = modifier,
-        openedContact = initialContact,
     )
 }
 
 @Composable
 fun MainScreenContent(
     contacts: List<Contact>,
-    onMainViewEvent: ActionWith<MainViewEvent>,
+    onMainScreenEvent: ActionWith<MainScreenEvent>,
     modifier: Modifier = Modifier,
-    openedContact: Contact? = null
 ) {
     val scaffoldState = rememberScaffoldState()
     val searchValue = rememberSaveable { mutableStateOf("") }
@@ -62,8 +58,8 @@ fun MainScreenContent(
             SearchTopAppBar(
                 searchValue.value,
                 onSearchChanged = { searchValue.value = it },
-                onAddContactClick = {onMainViewEvent(MainViewEvent.AddContactClick)},
-                onOpenSettingsClick = {onMainViewEvent(MainViewEvent.OpenSettings)}
+                onAddContactClick = {onMainScreenEvent(MainScreenEvent.AddContactClick)},
+                onOpenSettingsClick = {onMainScreenEvent(MainScreenEvent.OpenSettings)}
             )
         },
         backgroundColor = MaterialTheme.colors.background,
@@ -71,7 +67,7 @@ fun MainScreenContent(
         content = {
             ContactsListView(
                 grouped,
-                onMainViewEvent = onMainViewEvent,
+                onMainScreenEvent = onMainScreenEvent,
                 modifier = modifier
                     .padding(it),
             )

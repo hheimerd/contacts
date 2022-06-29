@@ -25,8 +25,10 @@ import com.hheimerd.hangouts.navigation.Routes.Companion.contactIdParam
 import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactScreen
 import com.hheimerd.hangouts.screens.MainScreen
 import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactViewModel
+import com.hheimerd.hangouts.ui.contact_card.ContactCardScreen
+import com.hheimerd.hangouts.ui.contact_card.ContactCardViewModel
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
-import com.hheimerd.hangouts.ui.mainScreen.MainScreenViewModel
+import com.hheimerd.hangouts.ui.main_screen.MainScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
         when (event) {
             is UiEvent.Navigate -> navController?.navigate(event.routeString)
             UiEvent.PopBack -> navController?.popBackStack()
+            else -> {}
         }
     }
 
@@ -89,13 +92,13 @@ class MainActivity : ComponentActivity() {
                         }
                         MainScreen(viewModel)
                     }
-                    composable("${Routes.Home}/?${contactIdParam}={${contactIdParam}}", contactIdParamArg) { navEntry ->
-                        val viewModel: MainScreenViewModel = hiltViewModel()
+                    composable(Routes.ContactCard, contactIdParamArg) { navEntry ->
+                        val viewModel: ContactCardViewModel = hiltViewModel()
                         LaunchedEffect(true) {
                             viewModel.uiEvent.collect(::onUiEvent)
                         }
 
-                        MainScreen(viewModel)
+                        ContactCardScreen(viewModel)
                     }
                     composable(Routes.AddEditContact, contactIdParamArg) { navEntry ->
                         val viewModel: AddEditContactViewModel = hiltViewModel()

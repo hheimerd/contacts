@@ -1,7 +1,5 @@
 package com.hheimerd.hangouts.ui.add_edit_contact
 
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -38,6 +36,7 @@ import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.components.Avatar
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.ui.styles.paddingSm
+import com.hheimerd.hangouts.ui.styles.topAppBarPadding
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.typeUtils.Action
@@ -46,21 +45,32 @@ import java.util.*
 
 
 @Composable
-fun EditContact(
+fun AddEditContactView(
     onEvent: ActionWith<AddEditContactEvent>,
-    initialValue: Contact,
+    initialValue: Contact?,
     scaffoldState: ScaffoldState,
     title: String,
     modifier: Modifier = Modifier
 ) {
 
-    var firstName: String by rememberSaveable { mutableStateOf(initialValue.firstName) }
-    var lastName: String by rememberSaveable { mutableStateOf(initialValue.lastName) }
-    var phone: String by rememberSaveable { mutableStateOf(initialValue.phone) }
-    var email: String by rememberSaveable { mutableStateOf(initialValue.email) }
-    var nickname: String by rememberSaveable { mutableStateOf(initialValue.nickname) }
-    var imageUri: String? by rememberSaveable { mutableStateOf(initialValue.imageUri) }
+    var firstName: String by rememberSaveable { mutableStateOf("") }
+    var lastName: String by rememberSaveable { mutableStateOf("") }
+    var phone: String by rememberSaveable { mutableStateOf("") }
+    var email: String by rememberSaveable { mutableStateOf("") }
+    var nickname: String by rememberSaveable { mutableStateOf("") }
+    var imageUri: String? by rememberSaveable { mutableStateOf("") }
 
+    LaunchedEffect(key1 = initialValue) {
+        if (initialValue == null)
+            return@LaunchedEffect
+
+        firstName = initialValue.firstName
+        lastName = initialValue.lastName
+        phone = initialValue.phone
+        email = initialValue.email
+        nickname = initialValue.nickname
+        imageUri = initialValue.imageUri
+    }
 
     var showErrors: Boolean by rememberSaveable { mutableStateOf(false) }
 
@@ -83,7 +93,7 @@ fun EditContact(
         scaffoldState = scaffoldState,
         modifier = modifier,
         topBar = {
-            SaveTopAppBar(
+            AddEditTopAppBar(
                 onOpenSettingsClick = {onEvent(AddEditContactEvent.OnSettingsClick)},
                 title = title,
                 onCloseClicked = {onEvent(AddEditContactEvent.OnCloseButtonClick)},
@@ -223,7 +233,7 @@ fun IconBefore(
 }
 
 @Composable
-fun SaveTopAppBar(
+fun AddEditTopAppBar(
     title: String,
     onOpenSettingsClick: Action,
     onCloseClicked: Action,
@@ -234,7 +244,7 @@ fun SaveTopAppBar(
 
     TopAppBar(
         modifier = Modifier
-            .padding(5.dp)
+            .topAppBarPadding()
             .then(modifier),
         backgroundColor = MaterialTheme.colors.background,
         elevation = 0.dp
@@ -285,7 +295,7 @@ fun SaveTopAppBar(
 @Composable
 fun PreviewEditContactScreen() {
     HangoutsTheme(true) {
-        EditContact(
+        AddEditContactView(
             {},
             initialValue = Contact("", ""),
             rememberScaffoldState(),

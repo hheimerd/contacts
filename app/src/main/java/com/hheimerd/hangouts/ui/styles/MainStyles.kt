@@ -28,6 +28,11 @@ fun Modifier.avatarSize(): Modifier {
         .requiredSize(40.dp)
 }
 
+fun Modifier.topAppBarPadding(): Modifier {
+    return this.padding(5.dp)
+}
+
+
 
 fun Modifier.avatarSpace(): Modifier {
     return this.width(14.dp)

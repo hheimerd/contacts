@@ -22,4 +22,7 @@
     <string name="change_photo">Change photo</string>
     <string name="phone_cant_be_empty">Phone can\'t be empty</string>
     <string name="name_cant_be_empty">Name can\'t be empty</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
