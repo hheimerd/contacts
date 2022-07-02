@@ -1,5 +1,7 @@
 package com.hheimerd.hangouts.ui.contact_card
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,7 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,8 +32,10 @@ import com.hheimerd.hangouts.components.Avatar
 import com.hheimerd.hangouts.components.AvatarDefault
 import com.hheimerd.hangouts.components.IconBefore
 import com.hheimerd.hangouts.data.models.Contact
+import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactView
 import com.hheimerd.hangouts.ui.styles.topAppBarPadding
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
+import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.rememberColorByString
 import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 
@@ -36,6 +44,8 @@ fun ContactCardView(
     contact: Contact,
     onEvent: ActionWith<ContactCardEvent>
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         topBar = { ContactCardTopBar(onEvent) }
     ) { scaffoldPaddings ->
@@ -45,7 +55,11 @@ fun ContactCardView(
                 .fillMaxSize()
                 .padding(scaffoldPaddings)
         ) {
-            if (contact.imageUri == null) {
+            val avatarBitmap =
+                if (contact.imageUri != null) InternalStorage.getPhoto(context, contact.imageUri)
+                else null
+
+            if (avatarBitmap == null) {
                 val color = rememberColorByString(contact.firstName)
                 AvatarDefault(
                     letter = contact.firstName.first(),
@@ -54,17 +68,22 @@ fun ContactCardView(
                     fontSize = 8.em
                 )
             } else {
-                Avatar(contact.imageUri, modifier = Modifier.padding(bottom = 20.dp))
+                Image(
+                    bitmap = avatarBitmap.asImageBitmap(),
+                    "",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .height(230.dp)
+                        .fillMaxWidth()
+                );
             }
-
-
 
             Text(
                 text = "${contact.firstName} ${contact.lastName}",
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 6.em,
-                modifier = Modifier.padding(vertical = 30.dp)
+                modifier = Modifier.padding(vertical = 20.dp)
             )
 
             Divider(
@@ -83,7 +102,11 @@ fun ContactCardView(
                     .height(1.5.dp)
             )
 
-            Surface(elevation = 5.dp, modifier = Modifier.padding(20.dp), shape = RoundedCornerShape(5)) {
+            Surface(
+                elevation = 5.dp,
+                modifier = Modifier.padding(20.dp),
+                shape = RoundedCornerShape(5)
+            ) {
                 Column(
                     modifier = Modifier.padding(horizontal = 60.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -195,6 +218,21 @@ fun CardPreview() {
 
 
 @Composable
+@Preview
+fun CardPreviewWithAvatar() {
+    HangoutsTheme(true) {
+        ContactCardView(contact = Contact(
+            "1234",
+            "Firstname",
+            email = "email",
+            nickname = "hheimerd",
+            lastName = "Lastname",
+            imageUri = "test"
+        ), onEvent = {})
+    }
+}
+
+@Composable
 fun ContactCardTopBar(onEvent: ActionWith<ContactCardEvent>) {
     var navExpanded by remember { mutableStateOf(false) }
 
@@ -220,7 +258,7 @@ fun ContactCardTopBar(onEvent: ActionWith<ContactCardEvent>) {
             DropdownMenu(
                 expanded = navExpanded,
                 onDismissRequest = { navExpanded = false },
-                offset = DpOffset(0.dp,0.dp)
+                offset = DpOffset(0.dp, 0.dp)
             ) {
                 DropdownMenuItem(onClick = { onEvent(ContactCardEvent.DeleteContactClick) }) {
                     Text(stringResource(R.string.delete))

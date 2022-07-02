@@ -27,4 +27,5 @@
     <string name="delete">Delete</string>
     <string name="call">Call</string>
     <string name="textMessage">Text</string>
+    <string name="incorrect_phone_format">Incorrect phone format</string>
 </resources>

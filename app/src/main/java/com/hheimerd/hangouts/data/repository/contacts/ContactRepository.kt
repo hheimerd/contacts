@@ -8,7 +8,7 @@ interface ContactRepository {
 
     fun getAll(): Flow<List<Contact>>
 
-    fun getById(id: String): Flow<Contact>
+    fun getById(id: String): Flow<Contact?>
 
     suspend fun insert(contact: Contact)
 

@@ -11,7 +11,7 @@ class RoomContactRepository @Inject constructor(private val contactDao: ContactD
         return contactDao.getAll();
     }
 
-    override fun getById(id: String): Flow<Contact> {
+    override fun getById(id: String): Flow<Contact?> {
         return contactDao.getById(id);
     }
 

@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -33,10 +34,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.components.Avatar
 import com.hheimerd.hangouts.components.IconBefore
 import com.hheimerd.hangouts.data.models.Contact
+import com.hheimerd.hangouts.ui.StringResource
 import com.hheimerd.hangouts.ui.styles.paddingSm
 import com.hheimerd.hangouts.ui.styles.topAppBarPadding
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
@@ -49,30 +52,11 @@ import java.util.*
 @Composable
 fun AddEditContactView(
     onEvent: ActionWith<AddEditContactEvent>,
-    initialValue: Contact,
+    contactState: AddEditContactStateHost,
     scaffoldState: ScaffoldState,
     title: String,
     modifier: Modifier = Modifier
 ) {
-
-    var firstName: String by rememberSaveable { mutableStateOf("") }
-    var lastName: String by rememberSaveable { mutableStateOf("") }
-    var phone: String by rememberSaveable { mutableStateOf("") }
-    var email: String by rememberSaveable { mutableStateOf("") }
-    var nickname: String by rememberSaveable { mutableStateOf("") }
-    var imageUri: String? by rememberSaveable { mutableStateOf("") }
-
-    LaunchedEffect(key1 = initialValue) {
-        firstName = initialValue.firstName
-        lastName = initialValue.lastName
-        phone = initialValue.phone
-        email = initialValue.email
-        nickname = initialValue.nickname
-        imageUri = initialValue.imageUri
-    }
-
-    var showErrors: Boolean by rememberSaveable { mutableStateOf(false) }
-
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
@@ -83,32 +67,22 @@ fun AddEditContactView(
 
             val uri = UUID.randomUUID().toString()
             if (InternalStorage.savePhoto(context, uri, bitmap)) {
-                imageUri = uri
+                contactState.imageUri.value = uri
             }
         }
     )
 
-    Log.d("imageUri", imageUri.toString());
+    Log.d("imageUri", contactState.imageUri.toString());
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = modifier,
         topBar = {
             AddEditTopAppBar(
-                onOpenSettingsClick = {onEvent(AddEditContactEvent.OnSettingsClick)},
+                onOpenSettingsClick = { onEvent(AddEditContactEvent.OnSettingsClick) },
                 title = title,
-                onCloseClicked = {onEvent(AddEditContactEvent.OnCloseButtonClick)},
+                onCloseClicked = { onEvent(AddEditContactEvent.OnCloseButtonClick) },
                 onSaveClicked = {
-                    onEvent(AddEditContactEvent.OnSave(
-                        initialValue.copy(
-                            phone = phone,
-                            firstName = firstName,
-                            lastName = lastName,
-                            email = email,
-                            nickname = nickname,
-                            imageUri = imageUri
-                        )
-                    ))
-                    showErrors = true
+                    onEvent(AddEditContactEvent.OnSave(contactState))
                 }
             )
         },
@@ -131,8 +105,8 @@ fun AddEditContactView(
                         }
                 ) {
                     val secondary = MaterialTheme.colors.secondary;
-                    if (imageUri.isNullOrBlank() == false) {
-                        Avatar(imageUri = imageUri!!, modifier = Modifier.size(50.dp))
+                    if (contactState.imageUri.value.isNullOrBlank() == false) {
+                        Avatar(imageUri = contactState.imageUri.value, modifier = Modifier.size(50.dp))
                     } else {
                         Icon(
                             Icons.Outlined.Add,
@@ -147,7 +121,12 @@ fun AddEditContactView(
                     }
 
                     Spacer(modifier = Modifier.height(5.dp))
-                    Text(stringResource(id = if(imageUri == null) R.string.add_photo else R.string.change_photo))
+                    Text(
+                        stringResource(
+                            if (contactState.imageUri == null) R.string.add_photo
+                            else R.string.change_photo
+                        )
+                    )
                 }
 
                 // Fields
@@ -157,76 +136,96 @@ fun AddEditContactView(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     // First name
-                    IconBefore(
+                    Field(
+                        valueState = contactState.firstName,
+                        label = stringResource(R.string.firstName),
+                        error = contactState.firstNameError.value?.asString(),
                         icon = Icons.Outlined.Person
-                    ) {
-                        OutlinedTextField(
-                            value = firstName,
-                            onValueChange = { value -> firstName = value },
-                            label = { Text(stringResource(R.string.firstName)) },
-                            singleLine = true,
-                            isError = showErrors && firstName.isEmpty(),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                        )
-                    }
+                    )
 
                     // Last name
-                    OutlinedTextField(value = lastName,
-                        onValueChange = { value -> lastName = value },
-                        label = { Text(stringResource(R.string.lastName)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-
+                    Field(
+                        valueState = contactState.lastName,
+                        label = stringResource(R.string.lastName),
+                        error = contactState.lastNameError.value?.asString(),
                     )
 
                     // Phone
-                    IconBefore(
+                    Field(
+                        valueState = contactState.phone,
+                        label = stringResource(R.string.phone),
+                        keyboardType = KeyboardType.Phone,
+                        error = contactState.phoneError.value?.asString(),
                         icon = Icons.Outlined.Phone
-                    ) {
-                        OutlinedTextField(
-                            value = phone,
-                            onValueChange = { value -> phone = value },
-                            label = { Text(stringResource(R.string.phone)) },
-                            singleLine = true,
-                            isError = showErrors && phone.isEmpty(),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Phone),
-                        )
-                    }
+                    )
 
                     // Email
-                    IconBefore(
+                    Field(
+                        valueState = contactState.email,
+                        label = stringResource(R.string.email),
+                        keyboardType = KeyboardType.Email,
+                        error = contactState.emailError.value?.asString(),
                         icon = Icons.Outlined.Email
-                    ) {
-                        OutlinedTextField(
-                            value = email,
-                            onValueChange = { value -> email = value },
-                            label = { Text(stringResource(R.string.email)) },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-
-                        )
-                    }
-
+                    )
 
                     // Nick
-                    IconBefore(
-                        icon = ImageVector.vectorResource(id = R.drawable.logo_42)
-                    ) {
-                        OutlinedTextField(
-                            value = nickname,
-                            onValueChange = { value -> nickname = value },
-                            label = { Text(stringResource(R.string.nickname)) },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = {
-                                focusManager.clearFocus()
-                            })
-                        )
-                    }
+                    Field(
+                        valueState = contactState.nickname,
+                        label = stringResource(R.string.nickname),
+                        keyboardType = KeyboardType.Email,
+                        error = contactState.nicknameError.value?.asString(),
+                        icon = Icons.Outlined.Email,
+                        imeAction = ImeAction.Done,
+                        keyboardActions = KeyboardActions(onDone = {
+                            focusManager.clearFocus()
+                        })
+                    )
+
                 }
             }
         }
     )
+}
+
+@Composable
+fun Field(
+    valueState: MutableState<String>,
+    error: String? = null,
+    label: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    icon: ImageVector? = null,
+    imeAction: ImeAction = ImeAction.Next,
+    keyboardActions: KeyboardActions = KeyboardActions()
+) {
+    val content = @Composable{
+        Column {
+            OutlinedTextField(
+                value = valueState.value,
+                onValueChange = { newValue -> valueState.value = newValue },
+                label = { Text(label) },
+                isError = error != null,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = keyboardType,
+                    imeAction = imeAction
+                ),
+                keyboardActions = keyboardActions,
+                maxLines = 1
+            )
+            if (error != null)
+                Text(error, color = Color.Red, fontSize = 3.em)
+        }
+    }
+    if (icon == null)
+        content()
+    else {
+        IconBefore(
+            icon = icon
+        ) {
+            content()
+        }
+    }
+
 }
 
 @Composable
@@ -298,7 +297,10 @@ fun PreviewEditContactScreen() {
     HangoutsTheme(true) {
         AddEditContactView(
             {},
-            initialValue = Contact("", ""),
+            contactState = with(AddEditContactStateHost()) {
+                phoneError.value = StringResource(R.string.phone_cant_be_empty)
+                this
+            },
             rememberScaffoldState(),
             title = "Edit contact",
         )

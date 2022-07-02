@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.hheimerd.hangouts.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,8 +17,6 @@ import javax.inject.Inject
 class InternalStorage @Inject constructor(@ApplicationContext private val context: Context) {
 
     companion object {
-        const val ImagesDir = "images"
-
         fun savePhoto(context: Context, filename: String, bitmap: Bitmap): Boolean {
             return try {
                 context.openFileOutput("$filename.jpg", MODE_PRIVATE).use { stream ->
@@ -33,13 +32,15 @@ class InternalStorage @Inject constructor(@ApplicationContext private val contex
         }
 
         fun getPhoto(context: Context, filename: String): Bitmap? {
-            Log.d("getPhoto", filename)
+            if (filename.isBlank())
+                return null
+
             val file = context.filesDir
-                .listFiles(FileFilter { it.canRead() && it.isFile && it.name.startsWith(filename) })
+                ?.listFiles(FileFilter { it.canRead() && it.isFile && it.name.startsWith(filename) })
                 ?.firstOrNull()
 
             if (file == null)
-                return null
+                return BitmapFactory.decodeResource(context.resources, R.drawable.logo_42_png)
 
             val bytes = file.readBytes()
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)

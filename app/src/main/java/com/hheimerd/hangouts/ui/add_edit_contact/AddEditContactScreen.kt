@@ -4,6 +4,7 @@ import android.os.Debug
 import android.util.Log
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,9 +37,10 @@ fun AddEditContactScreen(
         else R.string.edit_contact_title
 
 
+
     AddEditContactView(
         contactsViewModel::onEvent,
-        contactsViewModel.initialContact ?: remember {Contact("", "")},
+        contactsViewModel.state ?: AddEditContactStateHost(),
         scaffoldState,
         title = stringResource(titleId),
         modifier = modifier
