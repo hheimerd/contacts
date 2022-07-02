@@ -12,6 +12,7 @@ import com.hheimerd.hangouts.navigation.Routes
 import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.ui.StringResource
+import com.hheimerd.hangouts.utils.extensions.runInIOThread
 import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -62,19 +63,17 @@ class AddEditContactViewModel @Inject constructor(
                     }
 
                     if (newContact.firstName.isNotBlank() && newContact.phone.isNotBlank()) {
-                        saveContact(newContact)
+                        runInIOThread({
+                            contactsRepository.insert(
+                                newContact
+                            )
+                        }) {
+                            sendUiEvent(UiEvent.Navigate(Routes.ContactCard(newContact)))
+                        }
                     }
                 }
             }
         }
     }
 
-    fun saveContact(contact: Contact) {
-        viewModelScope.launch(Dispatchers.IO) {
-            contactsRepository.insert(
-                contact
-            )
-            sendUiEvent(UiEvent.Navigate(Routes.ContactCard(contact)))
-        }
-    }
 }

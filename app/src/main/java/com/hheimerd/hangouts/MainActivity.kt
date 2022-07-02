@@ -39,7 +39,12 @@ class MainActivity : ComponentActivity() {
 
     fun onUiEvent(event: UiEvent) {
         when (event) {
-            is UiEvent.Navigate -> navController?.navigate(event.routeString)
+            is UiEvent.Navigate -> {
+                navController?.navigate(event.routeString) {
+                    if (event.withPopAll)
+                        popUpTo(event.routeString)
+                }
+            }
             UiEvent.PopBack -> navController?.popBackStack()
             else -> {}
         }

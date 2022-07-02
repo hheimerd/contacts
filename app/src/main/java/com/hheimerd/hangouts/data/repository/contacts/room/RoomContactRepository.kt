@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class RoomContactRepository @Inject constructor(private val contactDao: ContactDao):
     ContactRepository {
-    override fun getAll(limit: Int, offset: Int): Flow<List<Contact>> {
-        return contactDao.getAll(limit, offset);
+    override fun getAll(): Flow<List<Contact>> {
+        return contactDao.getAll();
     }
 
     override fun getById(id: String): Flow<Contact> {

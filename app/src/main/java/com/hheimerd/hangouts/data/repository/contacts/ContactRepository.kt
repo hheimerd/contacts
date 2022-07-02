@@ -1,11 +1,12 @@
 package com.hheimerd.hangouts.data.repository.contacts
 
+import android.content.Context
 import com.hheimerd.hangouts.data.models.Contact
 import kotlinx.coroutines.flow.Flow
 
 interface ContactRepository {
 
-    fun getAll(limit: Int, offset: Int): Flow<List<Contact>>
+    fun getAll(): Flow<List<Contact>>
 
     fun getById(id: String): Flow<Contact>
 

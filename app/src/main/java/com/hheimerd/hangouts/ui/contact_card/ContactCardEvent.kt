@@ -5,4 +5,6 @@ sealed class ContactCardEvent {
     object EditContactClick: ContactCardEvent()
     object DeleteContactClick: ContactCardEvent()
     object BackButtonClicked: ContactCardEvent()
+    object TextMessage: ContactCardEvent()
+    object Call: ContactCardEvent()
 }

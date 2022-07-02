@@ -40,8 +40,8 @@ class MainScreenViewModel @Inject constructor(
     }
 
 
-    fun getAllContacts(limit: Int = 15, offset: Int = 0): Flow<List<Contact>> {
-        return contactsRepository.getAll(limit, offset)
+    fun getAllContacts(): Flow<List<Contact>> {
+        return contactsRepository.getAll()
     }
 
     private fun deleteContact(contact: Contact, onSuccess: suspend () -> Unit = {}) {
@@ -49,6 +49,5 @@ class MainScreenViewModel @Inject constructor(
             contactsRepository.delete(contact)
         }, onSuccess)
     }
-
 
 }

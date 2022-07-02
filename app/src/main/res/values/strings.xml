@@ -25,4 +25,6 @@
     <string name="back">Back</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="call">Call</string>
+    <string name="textMessage">Text</string>
 </resources>

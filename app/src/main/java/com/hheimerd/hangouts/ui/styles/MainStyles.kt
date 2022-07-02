@@ -22,9 +22,9 @@ val paddingSm = 16.dp
 val paddingMd = 24.dp
 val paddingLg = 32.dp
 
-fun Modifier.avatarSize(): Modifier {
+fun Modifier.avatarSmallSize(): Modifier {
     return this
-        .size(50.dp)
+        .size(40.dp)
         .requiredSize(40.dp)
 }
 

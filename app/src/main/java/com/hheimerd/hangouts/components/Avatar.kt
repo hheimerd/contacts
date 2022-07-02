@@ -1,74 +1,67 @@
 package com.hheimerd.hangouts.components
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
+import androidx.compose.ui.unit.em
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.data.models.Contact
-import com.hheimerd.hangouts.ui.styles.avatarSize
+import com.hheimerd.hangouts.ui.styles.avatarSmallSize
 import com.hheimerd.hangouts.utils.InternalStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 
 @Composable
-fun AvatarDefault(letter: Char, color: Color, modifier: Modifier = Modifier) {
-    Box(
+fun AvatarDefault(letter: Char, color: Color, modifier: Modifier = Modifier, fontSize: TextUnit = 4.em) {
+    Box(contentAlignment= Alignment.Center,
         modifier = Modifier
-            .avatarSize()
-            .drawBehind {
-                drawCircle(color)
-            }
-            .then(modifier),
-    ) {
-        Text(
-            letter.uppercaseChar().toString(),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            style = TextStyle(
-                fontFamily = FontFamily.SansSerif,
-            ),
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .fillMaxSize(),
-            textAlign = TextAlign.Center,
+            .background(color, shape = CircleShape)
+            .then(modifier)
+            .layout(){ measurable, constraints ->
+                // Measure the composable
+                val placeable = measurable.measure(constraints)
 
-            )
+                //get the current max dimension to assign width=height
+                val currentHeight = placeable.height
+                var heightCircle = currentHeight
+                if (placeable.width > heightCircle)
+                    heightCircle = placeable.width
+
+                //assign the dimension and the center position
+                layout(heightCircle, heightCircle) {
+                    // Where the composable gets placed
+                    placeable.placeRelative(0, (heightCircle-currentHeight)/2)
+                }
+            }) {
+
+        Text(
+            text = letter.uppercaseChar().toString(),
+            textAlign = TextAlign.Center,
+            color = Color.Black,
+            fontSize = fontSize,
+            modifier = Modifier.padding(4.dp).defaultMinSize(24.dp) //Use a min size for short text.
+        )
     }
 }
 
 @Composable
-fun Avatar(imageUri: String, description: String = "", modifier: Modifier = Modifier) {
+fun Avatar(imageUri: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -90,7 +83,7 @@ fun Avatar(imageUri: String, description: String = "", modifier: Modifier = Modi
         "",
         contentScale = ContentScale.Crop,
         modifier = Modifier
-            .avatarSize()
+            .avatarSmallSize()
             .then(modifier)
             .clip(CircleShape)
     )

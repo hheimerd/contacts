@@ -35,9 +35,10 @@ fun AddEditContactScreen(
         if (contactsViewModel.initialContact == null) R.string.create_contact_title
         else R.string.edit_contact_title
 
+
     AddEditContactView(
         contactsViewModel::onEvent,
-        contactsViewModel.initialContact,
+        contactsViewModel.initialContact ?: remember {Contact("", "")},
         scaffoldState,
         title = stringResource(titleId),
         modifier = modifier

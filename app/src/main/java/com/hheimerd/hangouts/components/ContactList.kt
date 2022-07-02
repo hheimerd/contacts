@@ -22,7 +22,7 @@ import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.ui.main_screen.MainScreenEvent
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.screens.testContact
-import com.hheimerd.hangouts.ui.styles.avatarSize
+import com.hheimerd.hangouts.ui.styles.avatarSmallSize
 import com.hheimerd.hangouts.ui.styles.avatarSpace
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.getRandomString
@@ -46,7 +46,7 @@ fun ContactsListView(
                 .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.avatarSize()) {
+                Box(modifier = Modifier.avatarSmallSize()) {
                     Icon(
                         Icons.Outlined.Person,
                         stringResource(id = R.string.add_contact),
@@ -108,9 +108,9 @@ fun ContactListItem(contact: Contact, modifier: Modifier = Modifier) {
     ) {
         contact.run {
             if (imageUri.isNullOrEmpty())
-                AvatarDefault(contact.firstName.first(), color)
+                AvatarDefault(contact.firstName.first(), color, modifier = Modifier.avatarSmallSize())
             else
-                Avatar(imageUri = imageUri, firstName)
+                Avatar(imageUri = imageUri)
             Spacer(modifier = Modifier.avatarSpace())
             Text(
                 "$firstName $lastName",

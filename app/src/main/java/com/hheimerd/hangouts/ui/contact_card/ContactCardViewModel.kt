@@ -2,6 +2,7 @@ package com.hheimerd.hangouts.ui.contact_card
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.navigation.Routes
+import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.extensions.runInIOThread
 import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactCardViewModel @Inject constructor(
     private val contactRepository: ContactRepository,
+    private val internalStorage: InternalStorage,
     savedStateHandle: SavedStateHandle
 ) : ViewModelWithUiEvent() {
     var contact by mutableStateOf<Contact?>(null);
@@ -38,11 +41,16 @@ class ContactCardViewModel @Inject constructor(
 
     fun onEvent(event: ContactCardEvent) {
         when (event) {
-            ContactCardEvent.BackButtonClicked -> sendUiEvent(UiEvent.PopBack)
+            ContactCardEvent.BackButtonClicked -> sendUiEvent(UiEvent.Navigate(Routes.Home, true))
             ContactCardEvent.DeleteContactClick -> {
                 contact?.let {
-                    runInIOThread({ contactRepository.delete(it) }) {
-                        sendUiEvent(UiEvent.Navigate(Routes.Home))
+                    runInIOThread({
+                        contactRepository.delete(it)
+                        if (it.imageUri.isNullOrBlank() == false) {
+                            internalStorage.deletePhoto(it.imageUri)
+                        }
+                    }) {
+                        sendUiEvent(UiEvent.Navigate(Routes.Home, true))
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.hheimerd.hangouts.ui.add_edit_contact
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.components.Avatar
+import com.hheimerd.hangouts.components.IconBefore
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.ui.styles.paddingSm
 import com.hheimerd.hangouts.ui.styles.topAppBarPadding
@@ -47,7 +49,7 @@ import java.util.*
 @Composable
 fun AddEditContactView(
     onEvent: ActionWith<AddEditContactEvent>,
-    initialValue: Contact?,
+    initialValue: Contact,
     scaffoldState: ScaffoldState,
     title: String,
     modifier: Modifier = Modifier
@@ -61,9 +63,6 @@ fun AddEditContactView(
     var imageUri: String? by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(key1 = initialValue) {
-        if (initialValue == null)
-            return@LaunchedEffect
-
         firstName = initialValue.firstName
         lastName = initialValue.lastName
         phone = initialValue.phone
@@ -89,6 +88,7 @@ fun AddEditContactView(
         }
     )
 
+    Log.d("imageUri", imageUri.toString());
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = modifier,
@@ -99,7 +99,14 @@ fun AddEditContactView(
                 onCloseClicked = {onEvent(AddEditContactEvent.OnCloseButtonClick)},
                 onSaveClicked = {
                     onEvent(AddEditContactEvent.OnSave(
-                        Contact(phone, firstName, lastName, email, nickname, imageUri)
+                        initialValue.copy(
+                            phone = phone,
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            nickname = nickname,
+                            imageUri = imageUri
+                        )
                     ))
                     showErrors = true
                 }
@@ -111,6 +118,8 @@ fun AddEditContactView(
                     .padding(it)
                     .verticalScroll(rememberScrollState())
             ) {
+
+                // Load Image
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,7 +131,7 @@ fun AddEditContactView(
                         }
                 ) {
                     val secondary = MaterialTheme.colors.secondary;
-                    if (imageUri != null) {
+                    if (imageUri.isNullOrBlank() == false) {
                         Avatar(imageUri = imageUri!!, modifier = Modifier.size(50.dp))
                     } else {
                         Icon(
@@ -141,11 +150,13 @@ fun AddEditContactView(
                     Text(stringResource(id = if(imageUri == null) R.string.add_photo else R.string.change_photo))
                 }
 
+                // Fields
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    // First name
                     IconBefore(
                         icon = Icons.Outlined.Person
                     ) {
@@ -159,6 +170,7 @@ fun AddEditContactView(
                         )
                     }
 
+                    // Last name
                     OutlinedTextField(value = lastName,
                         onValueChange = { value -> lastName = value },
                         label = { Text(stringResource(R.string.lastName)) },
@@ -167,9 +179,9 @@ fun AddEditContactView(
 
                     )
 
+                    // Phone
                     IconBefore(
                         icon = Icons.Outlined.Phone
-
                     ) {
                         OutlinedTextField(
                             value = phone,
@@ -181,6 +193,7 @@ fun AddEditContactView(
                         )
                     }
 
+                    // Email
                     IconBefore(
                         icon = Icons.Outlined.Email
                     ) {
@@ -194,6 +207,8 @@ fun AddEditContactView(
                         )
                     }
 
+
+                    // Nick
                     IconBefore(
                         icon = ImageVector.vectorResource(id = R.drawable.logo_42)
                     ) {
@@ -212,24 +227,6 @@ fun AddEditContactView(
             }
         }
     )
-}
-
-@Composable
-fun IconBefore(
-    icon: ImageVector,
-    content: @Composable () -> Unit
-) {
-    Row {
-        Icon(
-            icon, "",
-            Modifier
-                .width(0.dp)
-                .requiredSize(25.dp)
-                .offset((-30).dp, 25.dp)
-        )
-
-        content()
-    }
 }
 
 @Composable
@@ -271,23 +268,27 @@ fun AddEditTopAppBar(
                 stringResource(id = R.string.save),
             )
         }
-        DropdownMenu(
-            expanded = menuExpanded.value,
-            onDismissRequest = { menuExpanded.value = false },
-            offset = DpOffset((20).dp, (-40).dp),
-            modifier = Modifier.width(170.dp)
-        ) {
-            DropdownMenuItem(onClick = {
-                menuExpanded.value = false; onOpenSettingsClick()
-            }) {
-                Text(text = stringResource(id = R.string.settings))
+
+        IconButton(onClick = { menuExpanded.value = !menuExpanded.value }) {
+            Icon(
+                Icons.Rounded.MoreVert,
+                stringResource(id = R.string.more),
+            )
+
+            DropdownMenu(
+                expanded = menuExpanded.value,
+                onDismissRequest = { menuExpanded.value = false },
+                offset = DpOffset(0.dp, 0.dp),
+                modifier = Modifier.width(170.dp)
+            ) {
+                DropdownMenuItem(onClick = {
+                    menuExpanded.value = false; onOpenSettingsClick()
+                }) {
+                    Text(text = stringResource(id = R.string.settings))
+                }
             }
         }
-        Icon(
-            Icons.Rounded.MoreVert,
-            stringResource(id = R.string.more),
-            modifier = Modifier.clickable { menuExpanded.value = !menuExpanded.value }
-        )
+
     }
 }
 

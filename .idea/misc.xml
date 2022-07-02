@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects/Hangouts/app/src/main/java/com/hheimerd/hangouts/components/Avatar.kt" value="2.0" />
+        <entry key="..\:/Projects/Hangouts/app/src/main/java/com/hheimerd/hangouts/ui/add_edit_contact/AddEditContactView.kt" value="0.30658783783783783" />
+        <entry key="..\:/Projects/Hangouts/app/src/main/java/com/hheimerd/hangouts/ui/contact_card/ContactCardView.kt" value="0.19233716475095786" />
         <entry key="..\:/Projects/Hangouts/app/src/main/res/drawable/icons.xml" value="0.154" />
+        <entry key="..\:/Projects/Hangouts/app/src/main/res/drawable/message.xml" value="0.1935" />
       </map>
     </option>
   </component>
