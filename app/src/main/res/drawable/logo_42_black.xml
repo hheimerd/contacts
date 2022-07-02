@@ -10,16 +10,16 @@
         android:translateY="-372.70002">
 
         <path
-            android:fillColor="#ffffff"
+            android:fillColor="@color/black"
             android:pathData="M 229.2 443.9 L 279.9 443.9 L 279.9 469.3 L 305.2 469.3 L 305.2 423.4 L 254.6 423.4 L 305.2 372.7 L 279.9 372.7 L 229.2 423.4 Z" />
         <path
-            android:fillColor="#ffffff"
+            android:fillColor="@color/black"
             android:pathData="M 316.1 398.1 L 341.4 372.7 L 316.1 372.7 Z" />
         <path
-            android:fillColor="#ffffff"
+            android:fillColor="@color/black"
             android:pathData="M 341.4 398.1 L 316.1 423.4 L 316.1 448.7 L 341.4 448.7 L 341.4 423.4 L 366.8 398.1 L 366.8 372.7 L 341.4 372.7 Z" />
         <path
-            android:fillColor="#ffffff"
+            android:fillColor="@color/black"
             android:pathData="M 366.8 423.4 L 341.4 448.7 L 366.8 448.7 Z" />
     </group>
 </vector>
