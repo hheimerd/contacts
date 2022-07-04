@@ -1,16 +1,13 @@
 package com.hheimerd.hangouts.ui.add_edit_contact
 
-import android.os.Debug
-import android.util.Log
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.events.UiEvent
 
 @Composable
@@ -23,11 +20,13 @@ fun AddEditContactScreen(
     LaunchedEffect(true) {
         contactsViewModel.uiEvent.collect { event ->
             if (event is UiEvent.ShowSnackbar) {
-                scaffoldState.snackbarHostState.showSnackbar(
+                val result = scaffoldState.snackbarHostState.showSnackbar(
                     event.message.asString(context),
-                    event.action?.asString(context),
+                    event.actionMessage?.asString(context),
                     event.duration
                 );
+                if (result == SnackbarResult.ActionPerformed)
+                    event.action()
             }
         }
     }

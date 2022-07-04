@@ -19,6 +19,17 @@ class RoomContactRepository @Inject constructor(private val contactDao: ContactD
         contactDao.insert(contact)
     }
 
+    override suspend fun getOrCreate(phone: String): Contact {
+        var contact = contactDao.findByPhone(phone)
+
+        if (contact == null) {
+            contact = Contact(phone, phone)
+            insert(contact)
+        }
+
+        return contact
+    }
+
     override suspend fun delete(contact: Contact) {
         contactDao.delete(contact)
     }

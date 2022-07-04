@@ -1,7 +1,6 @@
 package com.hheimerd.hangouts.ui.add_edit_contact
 
 import android.telephony.PhoneNumberUtils
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -41,8 +40,8 @@ class AddEditContactViewModel @Inject constructor(
 
     fun onEvent(event: AddEditContactEvent) {
         when (event) {
-            AddEditContactEvent.OnCloseButtonClick -> sendUiEvent(UiEvent.PopBack)
-            AddEditContactEvent.OnSettingsClick -> sendUiEvent(UiEvent.Navigate(Routes.Settings))
+            AddEditContactEvent.OnCloseButtonClick -> sendUiEvent(UiEvent.PopBack,)
+            AddEditContactEvent.OnSettingsClick -> sendUiEvent(UiEvent.Navigate(Routes.Settings),)
             is AddEditContactEvent.OnSave -> {
                 event.contactState.let { contactState ->
                     // Contact Validation
@@ -74,7 +73,7 @@ class AddEditContactViewModel @Inject constructor(
                                     newContact
                                 )
                             }) {
-                                sendUiEvent(UiEvent.Navigate(Routes.ContactCard(newContact)))
+                                sendUiEvent(UiEvent.Navigate(Routes.ContactCard(newContact)),)
                             }
                         }
                     }

@@ -12,5 +12,7 @@ interface ContactRepository {
 
     suspend fun insert(contact: Contact)
 
+    suspend fun getOrCreate(phone: String): Contact
+
     suspend fun delete(contact: Contact)
 }

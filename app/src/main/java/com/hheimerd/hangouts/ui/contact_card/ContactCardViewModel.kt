@@ -2,7 +2,6 @@ package com.hheimerd.hangouts.ui.contact_card
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -14,8 +13,6 @@ import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.extensions.runInIOThread
 import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,7 +38,7 @@ class ContactCardViewModel @Inject constructor(
 
     fun onEvent(event: ContactCardEvent) {
         when (event) {
-            ContactCardEvent.BackButtonClicked -> sendUiEvent(UiEvent.Navigate(Routes.Home, true))
+            ContactCardEvent.BackButtonClicked -> sendUiEvent(UiEvent.Navigate(Routes.Home, true),)
             ContactCardEvent.DeleteContactClick -> {
                 contact?.let {
                     runInIOThread({
@@ -50,13 +47,13 @@ class ContactCardViewModel @Inject constructor(
                             internalStorage.deletePhoto(it.imageUri)
                         }
                     }) {
-                        sendUiEvent(UiEvent.Navigate(Routes.Home, true))
+                        sendUiEvent(UiEvent.Navigate(Routes.Home, true),)
                     }
                 }
             }
             ContactCardEvent.EditContactClick -> {
                 contact?.let {
-                    sendUiEvent(UiEvent.Navigate(Routes.EditContact(it)))
+                    sendUiEvent(UiEvent.Navigate(Routes.EditContact(it)),)
                 }
             }
             ContactCardEvent.OpenChatClick -> TODO()

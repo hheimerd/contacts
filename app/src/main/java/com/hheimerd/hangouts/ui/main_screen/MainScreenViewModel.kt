@@ -1,10 +1,5 @@
 package com.hheimerd.hangouts.ui.main_screen
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.navigation.Routes
@@ -25,15 +20,15 @@ class MainScreenViewModel @Inject constructor(
     fun onEvent(listEvent: MainScreenEvent) {
         when (listEvent) {
             MainScreenEvent.AddContactClick -> {
-                sendUiEvent(UiEvent.Navigate(Routes.AddEditContact))
+                sendUiEvent(UiEvent.Navigate(Routes.AddEditContact),)
             }
-            is MainScreenEvent.OpenContact -> sendUiEvent(UiEvent.Navigate(Routes.ContactCard(listEvent.contact)))
-            is MainScreenEvent.EditContactClick -> sendUiEvent(UiEvent.Navigate(Routes.EditContact(listEvent.contact)))
-            MainScreenEvent.OpenSettings -> sendUiEvent(UiEvent.Navigate(Routes.Settings))
+            is MainScreenEvent.OpenContact -> sendUiEvent(UiEvent.Navigate(Routes.ContactCard(listEvent.contact)),)
+            is MainScreenEvent.EditContactClick -> sendUiEvent(UiEvent.Navigate(Routes.EditContact(listEvent.contact)),)
+            MainScreenEvent.OpenSettings -> sendUiEvent(UiEvent.Navigate(Routes.Settings),)
             MainScreenEvent.UndoDelete -> TODO()
             is MainScreenEvent.Delete -> {
                 deleteContact(listEvent.contact) {
-                    sendUiEvent(UiEvent.Navigate(Routes.Home))
+                    sendUiEvent(UiEvent.Navigate(Routes.Home),)
                 }
             }
         }

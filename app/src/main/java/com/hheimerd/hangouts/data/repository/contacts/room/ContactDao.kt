@@ -20,4 +20,7 @@ interface ContactDao {
 
     @Query("SELECT * FROM ${Contact.TABLE_NAME}")
     fun getAll(): Flow<List<Contact>>
+
+    @Query("SELECT * FROM ${Contact.TABLE_NAME} WHERE phone = :phone")
+    suspend fun findByPhone(phone: String): Contact?
 }

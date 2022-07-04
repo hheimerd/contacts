@@ -3,6 +3,7 @@ package com.hheimerd.hangouts
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -46,6 +47,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
             UiEvent.PopBack -> navController?.popBackStack()
+            is UiEvent.RequestPermission -> {
+                val action = registerForActivityResult(ActivityResultContracts.RequestPermission()
+                    , event.onResult)
+                action.launch(event.permission)
+            }
             else -> {}
         }
     }

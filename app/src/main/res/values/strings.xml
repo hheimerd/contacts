@@ -28,4 +28,6 @@
     <string name="call">Call</string>
     <string name="textMessage">Text</string>
     <string name="incorrect_phone_format">Incorrect phone format</string>
+    <string name="sms_permission_deny_snack">Sms permission is required to send messages</string>
+    <string name="retry">Retry</string>
 </resources>
