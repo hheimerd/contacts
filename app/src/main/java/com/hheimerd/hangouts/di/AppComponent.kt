@@ -1,11 +1,8 @@
 package com.hheimerd.hangouts.di
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.telephony.SmsManager
-import androidx.core.app.ActivityCompat
 import androidx.room.Room
 import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import com.hheimerd.hangouts.data.repository.contacts.room.ContactDao
@@ -23,29 +20,19 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
-@Module(includes = [DatabaseBindingsModule::class])
+@Module(includes = [MessageBindingsModule::class])
 @InstallIn(SingletonComponent::class)
-class DatabaseModule {
-    @Singleton
-    @Provides
-    fun getContactRoomDatabase(@ApplicationContext context: Context): ContactRoomDatabase {
-        return Room
-            .databaseBuilder(context, ContactRoomDatabase::class.java, ContactRoomDatabase.DATABASE_NAME)
-            .build()
-    }
-
+class MessagesModule {
     @Singleton
     @Provides
     fun getMessageRoomDatabase(@ApplicationContext context: Context): MessageRoomDatabase {
         return Room
-            .databaseBuilder(context, MessageRoomDatabase::class.java, MessageRoomDatabase.DATABASE_NAME)
+            .databaseBuilder(
+                context,
+                MessageRoomDatabase::class.java,
+                MessageRoomDatabase.DATABASE_NAME
+            )
             .build()
-    }
-
-    @Provides
-    fun getContactDao(contactRoomDatabase: ContactRoomDatabase): ContactDao {
-        return contactRoomDatabase.getDao()
     }
 
     @Provides
@@ -55,22 +42,53 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun getSmsManager(@ApplicationContext context: Context): SmsManager {
+    fun getSmsManager(@ApplicationContext context: Context): SmsManager? {
         return if (Build.VERSION.SDK_INT >= 23)
             context.getSystemService(SmsManager::class.java)
         else
             SmsManager.getDefault()
     }
+
+
+}
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface MessageBindingsModule {
+    @Binds
+    fun bindMessageRepository(contactRepository: RoomMessageRepository):
+            MessageRepository
+
+}
+
+@Module(includes = [ContactBindingsModule::class])
+@InstallIn(SingletonComponent::class)
+class ContactModule {
+    @Singleton
+    @Provides
+    fun getContactRoomDatabase(@ApplicationContext context: Context): ContactRoomDatabase {
+        return Room
+            .databaseBuilder(
+                context,
+                ContactRoomDatabase::class.java,
+                ContactRoomDatabase.DATABASE_NAME
+            )
+            .build()
+    }
+
+
+    @Provides
+    fun getContactDao(contactRoomDatabase: ContactRoomDatabase): ContactDao {
+        return contactRoomDatabase.getDao()
+    }
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DatabaseBindingsModule {
+interface ContactBindingsModule {
     @Binds
     fun bindContactRepository(contactRepository: RoomContactRepository):
             ContactRepository
 
-    @Binds
-    fun bindMessageRepository(contactRepository: RoomMessageRepository):
-            MessageRepository
 }

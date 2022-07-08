@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.window.PopupProperties
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.components.Avatar
 import com.hheimerd.hangouts.components.IconBefore
@@ -42,6 +43,7 @@ import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.ui.StringResource
 import com.hheimerd.hangouts.ui.styles.paddingSm
 import com.hheimerd.hangouts.ui.styles.topAppBarPadding
+import com.hheimerd.hangouts.ui.styles.topBarButtonSpace
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.typeUtils.Action
@@ -72,18 +74,14 @@ fun AddEditContactView(
         }
     )
 
-    Log.d("imageUri", contactState.imageUri.toString());
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = modifier,
         topBar = {
             AddEditTopAppBar(
-                onOpenSettingsClick = { onEvent(AddEditContactEvent.OnSettingsClick) },
                 title = title,
-                onCloseClicked = { onEvent(AddEditContactEvent.OnCloseButtonClick) },
-                onSaveClicked = {
-                    onEvent(AddEditContactEvent.OnSave(contactState))
-                }
+                onEvent,
+                contactState
             )
         },
         content = {
@@ -106,7 +104,10 @@ fun AddEditContactView(
                 ) {
                     val secondary = MaterialTheme.colors.secondary;
                     if (contactState.imageUri.value.isNullOrBlank() == false) {
-                        Avatar(imageUri = contactState.imageUri.value, modifier = Modifier.size(50.dp))
+                        Avatar(
+                            imageUri = contactState.imageUri.value,
+                            modifier = Modifier.size(50.dp)
+                        )
                     } else {
                         Icon(
                             Icons.Outlined.Add,
@@ -197,7 +198,7 @@ fun Field(
     imeAction: ImeAction = ImeAction.Next,
     keyboardActions: KeyboardActions = KeyboardActions()
 ) {
-    val content = @Composable{
+    val content = @Composable {
         Column {
             OutlinedTextField(
                 value = valueState.value,
@@ -231,9 +232,8 @@ fun Field(
 @Composable
 fun AddEditTopAppBar(
     title: String,
-    onOpenSettingsClick: Action,
-    onCloseClicked: Action,
-    onSaveClicked: Action,
+    onEvent: ActionWith<AddEditContactEvent>,
+    contactState: AddEditContactStateHost,
     modifier: Modifier = Modifier,
 ) {
     val menuExpanded = remember { mutableStateOf(false) }
@@ -245,21 +245,23 @@ fun AddEditTopAppBar(
         backgroundColor = MaterialTheme.colors.background,
         elevation = 0.dp
     ) {
-        Icon(
-            Icons.Rounded.Close,
-            contentDescription = stringResource(id = R.string.close),
-            modifier = Modifier
-                .fillMaxHeight()
-                .clickable { onCloseClicked() }
-        )
-        Spacer(modifier = Modifier.width(20.dp))
+        IconButton(onClick = { onEvent(AddEditContactEvent.OnCloseButtonClick) }) {
+            Icon(
+                Icons.Rounded.Close,
+                contentDescription = stringResource(id = R.string.close),
+                modifier = Modifier.fillMaxHeight()
+            )
+
+        }
+
+        Spacer(modifier = Modifier.topBarButtonSpace())
         Text(
             text = title,
             style = MaterialTheme.typography.h5,
             modifier = Modifier.weight(1f)
         )
         Button(
-            onClick = onSaveClicked,
+            onClick = { onEvent(AddEditContactEvent.OnSave(contactState)) },
             shape = RoundedCornerShape(100),
             modifier = Modifier.width(85.dp)
         ) {
@@ -281,7 +283,8 @@ fun AddEditTopAppBar(
                 modifier = Modifier.width(170.dp)
             ) {
                 DropdownMenuItem(onClick = {
-                    menuExpanded.value = false; onOpenSettingsClick()
+                    menuExpanded.value = false;
+                    onEvent(AddEditContactEvent.OnSettingsClick)
                 }) {
                     Text(text = stringResource(id = R.string.settings))
                 }

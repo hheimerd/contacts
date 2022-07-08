@@ -1,18 +1,17 @@
 package com.hheimerd.hangouts.data.repository.messages.room
 
 import com.hheimerd.hangouts.data.models.Contact
-import com.hheimerd.hangouts.data.models.Message
-import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
+import com.hheimerd.hangouts.data.models.ChatMessage
 import com.hheimerd.hangouts.data.repository.messages.MessageRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RoomMessageRepository @Inject constructor(private val messageDao: MessageDao) : MessageRepository{
-    override suspend fun addMessage(message: Message) {
-        messageDao.add(message)
+    override suspend fun addMessage(chatMessage: ChatMessage) {
+        messageDao.add(chatMessage)
     }
 
-    override fun getMessagesFrom(contact: Contact): Flow<List<Message>> {
+    override fun getMessagesFrom(contact: Contact): Flow<List<ChatMessage>> {
         return messageDao.getAllFrom(contactId = contact.id)
     }
 

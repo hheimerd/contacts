@@ -178,7 +178,7 @@ fun ActionButtons(onEvent: ActionWith<ContactCardEvent>, modifier: Modifier) {
         }
 
         Button(
-            onClick = { onEvent(ContactCardEvent.TextMessage) },
+            onClick = { onEvent(ContactCardEvent.OpenChatClick) },
             elevation = ButtonDefaults.elevation(0.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
             modifier = Modifier.width(120.dp)

@@ -56,7 +56,10 @@ class ContactCardViewModel @Inject constructor(
                     sendUiEvent(UiEvent.Navigate(Routes.EditContact(it)),)
                 }
             }
-            ContactCardEvent.OpenChatClick -> TODO()
+            ContactCardEvent.OpenChatClick -> contact?.let {
+                sendUiEvent(UiEvent.Navigate(Routes.Chat(it)))
+            }
+            ContactCardEvent.Call -> TODO()
         }
     }
 

@@ -2,7 +2,6 @@ package com.hheimerd.hangouts.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.sql.Timestamp
 import java.util.UUID
 
 enum class MessageDirection {
@@ -10,13 +9,13 @@ enum class MessageDirection {
     Incoming
 }
 
-@Entity(tableName = Message.TableName)
-data class Message(
-    val message: String,
+@Entity(tableName = ChatMessage.TableName)
+data class ChatMessage(
+    val text: String,
     val contactId: String,
     val sent: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()/1000,
-    val messageDirection: MessageDirection,
+    val messageDirection: MessageDirection = MessageDirection.Outgoing,
 
     @PrimaryKey
     val id: String = UUID.randomUUID().toString()

@@ -1,25 +1,24 @@
 package com.hheimerd.hangouts.data.repository.messages.room
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.hheimerd.hangouts.data.models.Message
+import com.hheimerd.hangouts.data.models.ChatMessage
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
 
-    @Query("SELECT * FROM ${Message.TableName} WHERE contactId = :contactId")
-    fun getAllFrom(contactId: String): Flow<List<Message>>
+    @Query("SELECT * FROM ${ChatMessage.TableName} WHERE contactId = :contactId")
+    fun getAllFrom(contactId: String): Flow<List<ChatMessage>>
 
     @Insert()
-    fun add(message: Message)
+    fun add(chatMessage: ChatMessage)
 
-    @Query("DELETE FROM ${Message.TableName} WHERE contactId = :contactId")
+    @Query("DELETE FROM ${ChatMessage.TableName} WHERE contactId = :contactId")
     fun deleteAllFrom(contactId: String)
 
-    @Query("UPDATE ${Message.TableName} SET sent = 1 WHERE id = :messageId")
+    @Query("UPDATE ${ChatMessage.TableName} SET sent = 1 WHERE id = :messageId")
     fun markSent(messageId: String)
 
 }

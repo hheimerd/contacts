@@ -2,10 +2,9 @@ package com.hheimerd.hangouts.data.repository.messages.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.hheimerd.hangouts.data.models.Message
-import com.hheimerd.hangouts.data.repository.contacts.room.ContactDao
+import com.hheimerd.hangouts.data.models.ChatMessage
 
-@Database(entities = [Message::class], version = 1, exportSchema = false)
+@Database(entities = [ChatMessage::class], version = 1, exportSchema = false)
 abstract class MessageRoomDatabase : RoomDatabase() {
     abstract fun getDao(): MessageDao
 

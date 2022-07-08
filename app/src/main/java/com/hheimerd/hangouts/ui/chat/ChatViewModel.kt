@@ -2,6 +2,7 @@ package com.hheimerd.hangouts.ui.chat
 
 import android.Manifest
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsManager
@@ -13,13 +14,15 @@ import androidx.lifecycle.viewModelScope
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.broadcast_receivers.SmsBroadcastReceiver
 import com.hheimerd.hangouts.data.models.Contact
-import com.hheimerd.hangouts.data.models.Message
+import com.hheimerd.hangouts.data.models.ChatMessage
 import com.hheimerd.hangouts.data.models.MessageDirection
 import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import com.hheimerd.hangouts.data.repository.messages.MessageRepository
 import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.navigation.Routes
 import com.hheimerd.hangouts.ui.StringResource
+import com.hheimerd.hangouts.utils.extensions.runInIOThread
+import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -28,17 +31,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     val messageRepository: MessageRepository,
-    private val smsManager: SmsManager,
+    private val smsManager: SmsManager?,
     contactRepository: ContactRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModelWithUiEvent() {
     var contact by mutableStateOf<Contact?>(null)
         private set;
 
-    var sendSmsAllowed = false
-        private set
-
-    var messages by mutableStateOf<List<Message>>(listOf())
+    var messages by mutableStateOf<List<ChatMessage>>(listOf())
         private set
 
     init {
@@ -56,46 +56,38 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    fun onEvent(chatEvent: ChatEvent) {
+        when (chatEvent) {
+            ChatEvent.GoBack -> sendUiEvent(UiEvent.PopBack)
+            ChatEvent.RemoveChat -> {
+                runInIOThread({
+                    messageRepository.deleteMessagesFrom(contact!!)
+                }) {
 
-    private fun onSmsPermissionResult(allowed: Boolean) {
-        sendSmsAllowed = allowed
-        if (allowed) return
-
-        sendUiEvent(
-            UiEvent.ShowSnackbar(
-                StringResource(R.string.sms_permission_deny_snack),
-                StringResource(R.string.retry),
-            ) {
-                requestSmsPermission()
-            },
-        )
+                }
+            }
+            is ChatEvent.SendMessage -> {
+                sendMessage(chatEvent.message, chatEvent.context)
+            }
+        }
     }
 
-    fun requestSmsPermission() {
-        sendUiEvent(
-            UiEvent.RequestPermission(
-                Manifest.permission.SEND_SMS,
-                ::onSmsPermissionResult
-            )
-        )
-    }
-
-    fun sendMessage(messageText: String) {
-        if (contact == null || sendSmsAllowed == false)
+    private fun sendMessage(messageText: String, context: Context) {
+        if (contact == null)
             return
 
-        val message = Message(
+        val message = ChatMessage(
             contactId = contact!!.id,
-            message = messageText,
+            text = messageText,
             messageDirection = MessageDirection.Outgoing,
         )
 
         val intent = Intent(SmsBroadcastReceiver.SENT_INTENT);
         intent.putExtra(SmsBroadcastReceiver.SENT_INTENT_ID_KEY, message.id)
 
-        val sentPendingIntent = PendingIntent.getBroadcast(null, 0, intent, 0)
+        val sentPendingIntent = PendingIntent.getBroadcast(context, 0, intent, FLAG_IMMUTABLE)
 
-        smsManager.sendTextMessage(
+        smsManager?.sendTextMessage(
             contact!!.phone,
             null,
             messageText,

@@ -8,8 +8,6 @@ sealed class UiEvent {
     object PopBack: UiEvent();
     data class Navigate(val routeString: String, val withPopAll: Boolean = false): UiEvent();
 
-    data class RequestPermission(val permission: String, val onResult: (Boolean) -> Unit): UiEvent()
-
     data class ShowSnackbar(
         val message: StringResource,
         val actionMessage: StringResource? = null,

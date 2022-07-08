@@ -26,6 +26,8 @@ import com.hheimerd.hangouts.navigation.Routes.Companion.contactIdParam
 import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactScreen
 import com.hheimerd.hangouts.screens.MainScreen
 import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactViewModel
+import com.hheimerd.hangouts.ui.chat.ChatScreen
+import com.hheimerd.hangouts.ui.chat.ChatViewModel
 import com.hheimerd.hangouts.ui.contact_card.ContactCardScreen
 import com.hheimerd.hangouts.ui.contact_card.ContactCardViewModel
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
@@ -47,11 +49,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
             UiEvent.PopBack -> navController?.popBackStack()
-            is UiEvent.RequestPermission -> {
-                val action = registerForActivityResult(ActivityResultContracts.RequestPermission()
-                    , event.onResult)
-                action.launch(event.permission)
-            }
             else -> {}
         }
     }
@@ -103,7 +100,7 @@ class MainActivity : ComponentActivity() {
                         }
                         MainScreen(viewModel)
                     }
-                    composable(Routes.ContactCard, contactIdParamArg) { navEntry ->
+                    composable(Routes.ContactCard, contactIdParamArg) {
                         val viewModel: ContactCardViewModel = hiltViewModel()
                         LaunchedEffect(true) {
                             viewModel.uiEvent.collect(::onUiEvent)
@@ -111,7 +108,7 @@ class MainActivity : ComponentActivity() {
 
                         ContactCardScreen(viewModel)
                     }
-                    composable(Routes.AddEditContact, contactIdParamArg) { navEntry ->
+                    composable(Routes.AddEditContact, contactIdParamArg) {
                         val viewModel: AddEditContactViewModel = hiltViewModel()
                         LaunchedEffect(true) {
                             viewModel.uiEvent.collect(::onUiEvent)
@@ -120,7 +117,15 @@ class MainActivity : ComponentActivity() {
                             viewModel,
                         )
                     }
-
+                    composable(Routes.Chat, contactIdParamArg) {
+                        val viewModel: ChatViewModel = hiltViewModel()
+                        LaunchedEffect(true) {
+                            viewModel.uiEvent.collect(::onUiEvent)
+                        }
+                        ChatScreen(
+                            viewModel
+                        )
+                    }
                 }
             }
         }

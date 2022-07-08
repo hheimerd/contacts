@@ -33,7 +33,10 @@ fun Modifier.topAppBarPadding(): Modifier {
 }
 
 
-
 fun Modifier.avatarSpace(): Modifier {
     return this.width(14.dp)
+}
+
+fun Modifier.topBarButtonSpace(): Modifier {
+    return this.width(20.dp)
 }

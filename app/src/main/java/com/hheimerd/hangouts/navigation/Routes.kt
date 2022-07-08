@@ -7,6 +7,7 @@ class Routes {
         const val contactIdParam = "contactId";
         const val Home = "home";
         const val AddEditContact = "addEdit/$contactIdParam={$contactIdParam}";
+        const val Chat = "chat/$contactIdParam={$contactIdParam}";
         const val ContactCard = "contact/$contactIdParam={$contactIdParam}";
         const val Settings = "settings";
 
@@ -14,8 +15,8 @@ class Routes {
             return "addEdit/$contactIdParam=${contact.id}"
         }
 
-        fun Home(contact: Contact): String {
-            return "$Home/?contactId=${contact.id}"
+        fun Chat(contact: Contact): String {
+            return "chat/$contactIdParam=${contact.id}"
         }
 
         fun ContactCard(contact: Contact): String {

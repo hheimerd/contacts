@@ -8,6 +8,6 @@ fun ContactCardScreen(
     viewModel: ContactCardViewModel = hiltViewModel()
 ) {
     if (viewModel.contact == null)
-        return;
+        return
     ContactCardView(contact = viewModel.contact!!, onEvent = viewModel::onEvent)
 }
