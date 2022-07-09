@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.telephony.SmsManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +64,7 @@ class ChatViewModel @Inject constructor(
                 runInIOThread({
                     messageRepository.deleteMessagesFrom(contact!!)
                 }) {
-
+                    sendUiEvent(UiEvent.Navigate(Routes.Home, true))
                 }
             }
             is ChatEvent.SendMessage -> {
@@ -73,7 +74,7 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun sendMessage(messageText: String, context: Context) {
-        if (contact == null)
+        if (contact == null )
             return
 
         val message = ChatMessage(
@@ -82,17 +83,25 @@ class ChatViewModel @Inject constructor(
             messageDirection = MessageDirection.Outgoing,
         )
 
-        val intent = Intent(SmsBroadcastReceiver.SENT_INTENT);
+        val intent = Intent(context, SmsBroadcastReceiver::class.java);
         intent.putExtra(SmsBroadcastReceiver.SENT_INTENT_ID_KEY, message.id)
+        intent.action = SmsBroadcastReceiver.SENT_INTENT
 
-        val sentPendingIntent = PendingIntent.getBroadcast(context, 0, intent, FLAG_IMMUTABLE)
-
-        smsManager?.sendTextMessage(
-            contact!!.phone,
-            null,
-            messageText,
-            sentPendingIntent,
-            null
+        val sentPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            if (Build.VERSION.SDK_INT > 23) FLAG_IMMUTABLE else 0
         )
+
+        runInIOThread({ messageRepository.addMessage(message) }) {
+            smsManager?.sendTextMessage(
+                contact!!.phone,
+                null,
+                messageText,
+                sentPendingIntent,
+                null
+            )
+        }
     }
 }

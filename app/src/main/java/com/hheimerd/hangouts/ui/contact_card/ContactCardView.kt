@@ -1,6 +1,5 @@
 package com.hheimerd.hangouts.ui.contact_card
 
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -28,11 +26,9 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.hheimerd.hangouts.R
-import com.hheimerd.hangouts.components.Avatar
 import com.hheimerd.hangouts.components.AvatarDefault
 import com.hheimerd.hangouts.components.IconBefore
 import com.hheimerd.hangouts.data.models.Contact
-import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactView
 import com.hheimerd.hangouts.ui.styles.topAppBarPadding
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.InternalStorage
@@ -186,9 +182,9 @@ fun ActionButtons(onEvent: ActionWith<ContactCardEvent>, modifier: Modifier) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     ImageVector.vectorResource(R.drawable.message),
-                    stringResource(R.string.textMessage)
+                    stringResource(R.string.textMessageIconDescription)
                 )
-                Text(stringResource(R.string.textMessage))
+                Text(stringResource(R.string.textMessageIconDescription))
             }
         }
     }

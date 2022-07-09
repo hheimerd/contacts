@@ -13,9 +13,9 @@ enum class MessageDirection {
 data class ChatMessage(
     val text: String,
     val contactId: String,
+    val messageDirection: MessageDirection,
     val sent: Boolean = false,
-    val timestamp: Long = System.currentTimeMillis()/1000,
-    val messageDirection: MessageDirection = MessageDirection.Outgoing,
+    val timestamp: Long = System.currentTimeMillis(),
 
     @PrimaryKey
     val id: String = UUID.randomUUID().toString()

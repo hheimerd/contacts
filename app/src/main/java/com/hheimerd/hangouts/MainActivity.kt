@@ -1,8 +1,12 @@
 package com.hheimerd.hangouts
 
+import android.Manifest
+import android.app.Instrumentation
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -11,6 +15,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -57,6 +63,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+//        val requestSmsReceive = registerForActivityResult(ActivityResultContracts.RequestPermission()) { success ->
+//            if (!success) {
+//                Toast.makeText(this, getString(R.string.SMS_receive_permisson_required), Toast.LENGTH_LONG).show()
+//            }
+//        }
+//
+//        requestSmsReceive.launch(Manifest.permission.RECEIVE_SMS)
+//        requestSmsReceive.launch(Manifest.permission.READ_SMS)
 
         setContent {
             val systemUiController = rememberSystemUiController()

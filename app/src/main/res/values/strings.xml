@@ -26,10 +26,12 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="call">Call</string>
-    <string name="textMessage">Text</string>
+    <string name="textMessageIconDescription">Text</string>
     <string name="incorrect_phone_format">Incorrect phone format</string>
     <string name="sms_permission_deny_snack">Sms permission is required to send messages</string>
     <string name="retry">Retry</string>
     <string name="send">Send</string>
     <string name="SMS_send_permisson_required">SMS send permission is required for this action</string>
+    <string name="SMS_receive_permisson_required">SMS receive permission is required for this app</string>
+    <string name="message">Message</string>
 </resources>
