@@ -7,9 +7,7 @@ import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import com.hheimerd.hangouts.utils.extensions.runInIOThread
 import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,9 +20,12 @@ class MainScreenViewModel @Inject constructor(
             MainScreenEvent.AddContactClick -> {
                 sendUiEvent(UiEvent.Navigate(Routes.AddEditContact),)
             }
-            is MainScreenEvent.OpenContact -> sendUiEvent(UiEvent.Navigate(Routes.ContactCard(listEvent.contact)),)
-            is MainScreenEvent.EditContactClick -> sendUiEvent(UiEvent.Navigate(Routes.EditContact(listEvent.contact)),)
-            MainScreenEvent.OpenSettings -> sendUiEvent(UiEvent.Navigate(Routes.Settings),)
+            is MainScreenEvent.OpenContact -> sendUiEvent(
+                UiEvent.Navigate(Routes.ContactCard(listEvent.contact)),)
+            is MainScreenEvent.EditContactClick -> sendUiEvent(
+                UiEvent.Navigate(Routes.EditContact(listEvent.contact)),)
+            MainScreenEvent.OpenSettings -> sendUiEvent(
+                UiEvent.Navigate(Routes.Settings),)
             MainScreenEvent.UndoDelete -> TODO()
             is MainScreenEvent.Delete -> {
                 deleteContact(listEvent.contact) {

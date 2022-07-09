@@ -32,9 +32,9 @@
     <string name="retry">Retry</string>
     <string name="send">Send</string>
     <string name="SMS_send_permisson_required">SMS send permission is required for this app</string>
-    <string name="SMS_receive_permisson_required">SMS receive permission is required for this app</string>
     <string name="message">Message</string>
     <string name="SMS_send_not_allowed">SMS send not allowed</string>
     <string name="header_color">Header color</string>
     <string name="random_color">Random color</string>
+    <string name="operation_not_allowed">Operation is not allowed</string>
 </resources>

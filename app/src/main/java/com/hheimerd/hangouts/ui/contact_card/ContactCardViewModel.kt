@@ -1,5 +1,8 @@
 package com.hheimerd.hangouts.ui.contact_card
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +18,7 @@ import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ContactCardViewModel @Inject constructor(
@@ -38,7 +42,9 @@ class ContactCardViewModel @Inject constructor(
 
     fun onEvent(event: ContactCardEvent) {
         when (event) {
-            ContactCardEvent.BackButtonClicked -> sendUiEvent(UiEvent.Navigate(Routes.Home, true),)
+            ContactCardEvent.BackButtonClicked -> sendUiEvent(
+                UiEvent.Navigate(Routes.Home, true)
+            )
             ContactCardEvent.DeleteContactClick -> {
                 contact?.let {
                     runInIOThread({
@@ -47,19 +53,26 @@ class ContactCardViewModel @Inject constructor(
                             internalStorage.deletePhoto(it.imageUri)
                         }
                     }) {
-                        sendUiEvent(UiEvent.Navigate(Routes.Home, true),)
+                        sendUiEvent(
+                            UiEvent.Navigate(Routes.Home, true)
+                        )
                     }
                 }
             }
             ContactCardEvent.EditContactClick -> {
                 contact?.let {
-                    sendUiEvent(UiEvent.Navigate(Routes.EditContact(it)),)
+                    sendUiEvent(
+                        UiEvent.Navigate(Routes.EditContact(it))
+                    )
                 }
             }
             ContactCardEvent.OpenChatClick -> contact?.let {
                 sendUiEvent(UiEvent.Navigate(Routes.Chat(it)))
             }
-            ContactCardEvent.Call -> TODO()
+            ContactCardEvent.Call -> {
+                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contact?.phone))
+                sendUiEvent(UiEvent.StartActivity(intent, Manifest.permission.CALL_PHONE))
+            }
         }
     }
 

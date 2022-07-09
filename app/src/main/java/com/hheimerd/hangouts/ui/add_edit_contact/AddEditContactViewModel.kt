@@ -40,8 +40,10 @@ class AddEditContactViewModel @Inject constructor(
 
     fun onEvent(event: AddEditContactEvent) {
         when (event) {
-            AddEditContactEvent.OnCloseButtonClick -> sendUiEvent(UiEvent.PopBack,)
-            AddEditContactEvent.OnSettingsClick -> sendUiEvent(UiEvent.Navigate(Routes.Settings),)
+            AddEditContactEvent.OnCloseButtonClick -> sendUiEvent(
+                UiEvent.PopBack,)
+            AddEditContactEvent.OnSettingsClick -> sendUiEvent(
+                UiEvent.Navigate(Routes.Settings),)
             is AddEditContactEvent.OnSave -> {
                 event.contactState.let { contactState ->
                     // Contact Validation
@@ -73,7 +75,8 @@ class AddEditContactViewModel @Inject constructor(
                                     newContact
                                 )
                             }) {
-                                sendUiEvent(UiEvent.Navigate(Routes.ContactCard(newContact)),)
+                                sendUiEvent(
+                                    UiEvent.Navigate(Routes.ContactCard(newContact)),)
                             }
                         }
                     }

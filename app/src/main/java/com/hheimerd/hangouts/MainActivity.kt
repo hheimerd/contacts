@@ -1,7 +1,7 @@
 package com.hheimerd.hangouts
 
 import android.Manifest
-import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -12,10 +12,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -57,6 +57,26 @@ class MainActivity : ComponentActivity() {
                 }
             }
             UiEvent.PopBack -> navController?.popBackStack()
+            is UiEvent.StartActivity -> {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        event.permission
+                    ) == PermissionChecker.PERMISSION_GRANTED
+                ) {
+                    try {
+                        startActivity(event.intent)
+                    } catch (e: Error) {
+                        Toast.makeText(
+                            this,
+                            getString(R.string.operation_not_allowed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(this, R.string.operation_not_allowed, Toast.LENGTH_SHORT).show()
+                }
+
+            }
             else -> {}
         }
     }
@@ -76,17 +96,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val requestSmsSend = registerForActivityResult(ActivityResultContracts.RequestPermission()) { allowed ->
-            if (!allowed) {
-                Toast.makeText(this, getString(R.string.SMS_send_permisson_required), Toast.LENGTH_LONG).show()
+        val requestSmsSend =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { allowed ->
+                if (!allowed) {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.SMS_send_permisson_required),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-        }
 
-        val requestSmsReceive = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+        val requestPermission =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
         requestSmsSend.launch(Manifest.permission.SEND_SMS)
-        requestSmsReceive.launch(Manifest.permission.RECEIVE_SMS)
-        requestSmsReceive.launch(Manifest.permission.READ_SMS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermission.launch(Manifest.permission_group.SMS)
+        }
+
+        requestPermission.launch(Manifest.permission.READ_SMS)
+        requestPermission.launch(Manifest.permission.RECEIVE_SMS)
+        requestPermission.launch(Manifest.permission.CALL_PHONE)
 
 
         setContent {
@@ -159,7 +190,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(Routes.Settings) {
-                        SettingsScreen(systemUiController, onPopBack = { navController.popBackStack() })
+                        SettingsScreen(
+                            systemUiController,
+                            onPopBack = { navController.popBackStack() })
                     }
                 }
             }

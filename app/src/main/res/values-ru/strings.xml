@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hangouts</string>
+    <string name="search">Поиск</string>
+    <string name="search_label">Найти контакт</string>
+    <string name="more">Ещё</string>
+    <string name="add_contact">Добавить контакт</string>
+    <string name="settings">Настройки</string>
+    <string name="create_contact">Создать новый контакт</string>
+    <string name="create_contact_title">Создать контакт</string>
+    <string name="edit_contact_title">Изменение</string>
+    <string name="save">Сохранить</string>
+    <string name="add_photo">Добавить фото</string>
+    <string name="firstName">Имя</string>
+    <string name="lastName">Фамилия</string>
+    <string name="phone">Телефон</string>
+    <string name="email">Email</string>
+    <string name="nickname">Никнейм</string>
+    <string name="close">Закрыть</string>
+    <string name="required_fields_error_message">Заполните все обязательные поля</string>
+    <string name="change_photo">Изменить фото</string>
+    <string name="phone_cant_be_empty">Телефон не может быть пустым</string>
+    <string name="name_cant_be_empty">Имя не может быть пустым</string>
+    <string name="back">Назад</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="call">Позвонить</string>
+    <string name="textMessageIconDescription">Написать</string>
+    <string name="incorrect_phone_format">Не верный формат номера</string>
+    <string name="sms_permission_deny_snack">Права на отправку СМС обязательны для отправки сообщений</string>
+    <string name="retry">Повторить</string>
+    <string name="send">Отправить</string>
+    <string name="SMS_send_permisson_required">Права на отправку СМС обязательны для отправки сообщений</string>
+    <string name="message">сообщение</string>
+    <string name="SMS_send_not_allowed">Отправка сообщений не разрешена</string>
+    <string name="header_color">Цвет шапки</string>
+    <string name="random_color">Рандомный цвет</string>
+    <string name="operation_not_allowed">Действие не разрешено</string>
+</resources>

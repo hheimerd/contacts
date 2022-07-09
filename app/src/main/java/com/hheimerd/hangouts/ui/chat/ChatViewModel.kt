@@ -1,19 +1,16 @@
 package com.hheimerd.hangouts.ui.chat
 
-import android.Manifest
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.telephony.SmsManager
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.broadcast_receivers.SmsBroadcastReceiver
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.data.models.ChatMessage
@@ -22,9 +19,7 @@ import com.hheimerd.hangouts.data.repository.contacts.ContactRepository
 import com.hheimerd.hangouts.data.repository.messages.MessageRepository
 import com.hheimerd.hangouts.events.UiEvent
 import com.hheimerd.hangouts.navigation.Routes
-import com.hheimerd.hangouts.ui.StringResource
 import com.hheimerd.hangouts.utils.extensions.runInIOThread
-import com.hheimerd.hangouts.utils.typeUtils.ActionWith
 import com.hheimerd.hangouts.viewModels.ViewModelWithUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

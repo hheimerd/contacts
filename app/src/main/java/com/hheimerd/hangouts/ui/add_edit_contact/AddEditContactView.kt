@@ -120,7 +120,7 @@ fun AddEditContactView(
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         stringResource(
-                            if (contactState.imageUri == null) R.string.add_photo
+                            if (contactState.imageUri.value.isBlank()) R.string.add_photo
                             else R.string.change_photo
                         )
                     )
