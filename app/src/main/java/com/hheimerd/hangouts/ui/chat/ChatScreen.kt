@@ -9,5 +9,5 @@ fun ChatScreen(
 ) {
     if (viewModel.contact == null) return
 
-    ChatView(viewModel.messages, viewModel.contact!!, viewModel::onEvent)
+    ChatView(viewModel.messages, viewModel.contact!!, viewModel::onEvent, viewModel.sendMessageAllowed)
 }

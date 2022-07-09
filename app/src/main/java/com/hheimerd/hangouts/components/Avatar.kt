@@ -31,8 +31,8 @@ import kotlinx.coroutines.launch
 fun AvatarDefault(letter: Char, color: Color, modifier: Modifier = Modifier, fontSize: TextUnit = 4.em) {
     Box(contentAlignment= Alignment.Center,
         modifier = Modifier
-            .background(color, shape = CircleShape)
             .then(modifier)
+            .background(color, shape = CircleShape)
             .layout(){ measurable, constraints ->
                 // Measure the composable
                 val placeable = measurable.measure(constraints)

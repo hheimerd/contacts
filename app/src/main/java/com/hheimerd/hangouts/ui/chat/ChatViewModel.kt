@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.telephony.SmsManager
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -36,6 +37,9 @@ class ChatViewModel @Inject constructor(
     contactRepository: ContactRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModelWithUiEvent() {
+    var sendMessageAllowed by mutableStateOf(false)
+        private set
+
     var contact by mutableStateOf<Contact?>(null)
         private set;
 
@@ -70,11 +74,13 @@ class ChatViewModel @Inject constructor(
             is ChatEvent.SendMessage -> {
                 sendMessage(chatEvent.message, chatEvent.context)
             }
+            is ChatEvent.SendSmsPermissionResult ->
+                sendMessageAllowed = chatEvent.permissionAllowed && contact != null && smsManager != null
         }
     }
 
     private fun sendMessage(messageText: String, context: Context) {
-        if (contact == null )
+        if (!sendMessageAllowed)
             return
 
         val message = ChatMessage(

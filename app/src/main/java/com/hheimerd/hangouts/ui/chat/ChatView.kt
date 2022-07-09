@@ -1,6 +1,7 @@
 package com.hheimerd.hangouts.ui.chat
 
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -42,24 +43,25 @@ fun ChatView(
     chatMessages: List<ChatMessage>,
     contact: Contact,
     onChatEvent: ActionWith<ChatEvent>,
+    sendMessageAllowed: Boolean,
     modifier: Modifier = Modifier
 ) {
     val messageText = remember { mutableStateOf("") }
-    var sendMessageAllowed by remember { mutableStateOf(false) }
     val lazyListSTate = rememberLazyListState()
-
-    LaunchedEffect(chatMessages) {
-        val lastItemIndex = lazyListSTate.layoutInfo.totalItemsCount - 1
-        if (lastItemIndex >= 0)
-            lazyListSTate.scrollToItem(lastItemIndex)
-    }
 
     val context = LocalContext.current
 
     val requestSmsPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { allowed ->
-        sendMessageAllowed = allowed
+        onChatEvent(ChatEvent.SendSmsPermissionResult(allowed))
+        if (!allowed) {
+            Toast.makeText(context, R.string.SMS_send_permisson_required, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    LaunchedEffect(true) {
+        requestSmsPermission.launch(Manifest.permission.SEND_SMS)
     }
 
     Scaffold(
@@ -77,7 +79,7 @@ fun ChatView(
                 state = lazyListSTate,
                 reverseLayout = true
             ) {
-                items(chatMessages.reversed(), key = {it.id}) { chatMessage: ChatMessage ->
+                items(chatMessages.reversed(), key = { it.id }) { chatMessage: ChatMessage ->
                     when (chatMessage.messageDirection) {
                         MessageDirection.Incoming -> MessageIncoming(chatMessage, contact)
                         MessageDirection.Outgoing -> MessageOutgoing(chatMessage)
@@ -161,7 +163,12 @@ fun MessageField(
                 enabled = sendMessageAllowed,
                 onValueChange = { messageText.value = it },
                 shape = RoundedCornerShape(10.dp),
-                placeholder = { Text(text = stringResource(R.string.message)) },
+                placeholder = {
+                    if (sendMessageAllowed)
+                        Text(text = stringResource(R.string.message))
+                    else
+                        Text(stringResource(R.string.SMS_send_not_allowed))
+                },
                 colors = TextFieldDefaults.transparent,
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -266,7 +273,8 @@ fun ChatViewPreview() {
         ChatView(
             listOf(from, longTextFrom, to, longTextTo, to, from, longTextTo, longTextFrom),
             Contact("1234", "Test"),
-            {}
+            {},
+            true
         )
     }
 }

@@ -63,14 +63,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-//        val requestSmsReceive = registerForActivityResult(ActivityResultContracts.RequestPermission()) { success ->
-//            if (!success) {
-//                Toast.makeText(this, getString(R.string.SMS_receive_permisson_required), Toast.LENGTH_LONG).show()
-//            }
-//        }
-//
-//        requestSmsReceive.launch(Manifest.permission.RECEIVE_SMS)
-//        requestSmsReceive.launch(Manifest.permission.READ_SMS)
+        val requestSmsReceive = registerForActivityResult(ActivityResultContracts.RequestPermission()) { success ->
+            if (!success) {
+                Toast.makeText(this, getString(R.string.SMS_send_permisson_required), Toast.LENGTH_LONG).show()
+            }
+        }
+
+        requestSmsReceive.launch(Manifest.permission.SEND_SMS)
 
         setContent {
             val systemUiController = rememberSystemUiController()
