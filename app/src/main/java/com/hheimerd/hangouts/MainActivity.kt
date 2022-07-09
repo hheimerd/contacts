@@ -39,12 +39,14 @@ import com.hheimerd.hangouts.ui.contact_card.ContactCardViewModel
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.ui.main_screen.MainScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var navController: NavHostController? = null;
+    private var hideDate: Date? = null
 
     fun onUiEvent(event: UiEvent) {
         when (event) {
@@ -59,6 +61,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (hideDate != null)
+            Toast.makeText(this, hideDate.toString(), Toast.LENGTH_LONG).show()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hideDate = Date()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
