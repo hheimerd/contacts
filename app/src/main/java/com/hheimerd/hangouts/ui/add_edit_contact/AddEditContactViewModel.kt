@@ -63,7 +63,7 @@ class AddEditContactViewModel @Inject constructor(
                             val newContact = initial.copy(
                                 firstName = contactState.firstName.value,
                                 lastName = contactState.lastName.value,
-                                phone = contactState.phone.value,
+                                phone = Contact.normalizePhone(contactState.phone.value),
                                 email = contactState.email.value,
                                 nickname = contactState.nickname.value,
                                 imageUri = contactState.imageUri.value,

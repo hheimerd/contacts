@@ -1,5 +1,6 @@
 package com.hheimerd.hangouts.data.models
 
+import android.telephony.PhoneNumberUtils
 import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -22,6 +23,13 @@ data class Contact(
 ) {
     companion object {
         const val TABLE_NAME = "contacts"
+
+        fun normalizePhone(phoneString: String): String {
+            var normalized = PhoneNumberUtils.normalizeNumber(phoneString)
+            if (normalized.length == 11 && normalized.first() == '8')
+                normalized = "+7" + normalized.substring(1)
+            return normalized
+        }
     }
 
     val fullName: String

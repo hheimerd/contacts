@@ -1,22 +1,21 @@
 package com.hheimerd.hangouts
 
 import android.Manifest
-import android.app.Instrumentation
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -31,6 +30,7 @@ import com.hheimerd.hangouts.navigation.Routes
 import com.hheimerd.hangouts.navigation.Routes.Companion.contactIdParam
 import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactScreen
 import com.hheimerd.hangouts.screens.MainScreen
+import com.hheimerd.hangouts.screens.SettingsScreen
 import com.hheimerd.hangouts.ui.add_edit_contact.AddEditContactViewModel
 import com.hheimerd.hangouts.ui.chat.ChatScreen
 import com.hheimerd.hangouts.ui.chat.ChatViewModel
@@ -59,17 +59,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val requestSmsReceive = registerForActivityResult(ActivityResultContracts.RequestPermission()) { success ->
-            if (!success) {
+        val requestSmsSend = registerForActivityResult(ActivityResultContracts.RequestPermission()) { allowed ->
+            if (!allowed) {
                 Toast.makeText(this, getString(R.string.SMS_send_permisson_required), Toast.LENGTH_LONG).show()
             }
         }
 
-        requestSmsReceive.launch(Manifest.permission.SEND_SMS)
+        val requestSmsReceive = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+
+        requestSmsSend.launch(Manifest.permission.SEND_SMS)
+        requestSmsReceive.launch(Manifest.permission.RECEIVE_SMS)
+        requestSmsReceive.launch(Manifest.permission.READ_SMS)
+
 
         setContent {
             val systemUiController = rememberSystemUiController()
@@ -92,6 +98,7 @@ class MainActivity : ComponentActivity() {
                     systemUiController.setSystemBarsColor(Color.White)
                 }
             }
+
 
             HangoutsTheme {
                 NavHost(
@@ -138,6 +145,9 @@ class MainActivity : ComponentActivity() {
                         ChatScreen(
                             viewModel
                         )
+                    }
+                    composable(Routes.Settings) {
+                        SettingsScreen(systemUiController, onPopBack = { navController.popBackStack() })
                     }
                 }
             }

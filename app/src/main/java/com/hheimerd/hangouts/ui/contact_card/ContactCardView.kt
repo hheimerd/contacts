@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.components.AvatarDefault
+import com.hheimerd.hangouts.components.DefaultTopAppBar
 import com.hheimerd.hangouts.components.IconBefore
 import com.hheimerd.hangouts.data.models.Contact
-import com.hheimerd.hangouts.ui.styles.topAppBarPadding
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.InternalStorage
 import com.hheimerd.hangouts.utils.rememberColorByString
@@ -232,18 +231,7 @@ fun CardPreviewWithAvatar() {
 fun ContactCardTopBar(onEvent: ActionWith<ContactCardEvent>) {
     var navExpanded by remember { mutableStateOf(false) }
 
-    TopAppBar(
-        modifier = Modifier
-            .topAppBarPadding(),
-        backgroundColor = MaterialTheme.colors.background,
-        elevation = 0.dp
-    ) {
-        // Back
-        IconButton(onClick = { onEvent(ContactCardEvent.BackButtonClicked) }) {
-            Icon(Icons.Outlined.ArrowBack, stringResource(R.string.back))
-        }
-        Spacer(Modifier.weight(1f))
-
+    DefaultTopAppBar(title = "", onBackClick = { onEvent(ContactCardEvent.BackButtonClicked) }) {
         // Edit
         IconButton(onClick = { onEvent(ContactCardEvent.EditContactClick) }) {
             Icon(Icons.Outlined.Edit, stringResource(R.string.edit))

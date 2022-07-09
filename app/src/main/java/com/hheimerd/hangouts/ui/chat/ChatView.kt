@@ -20,18 +20,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hheimerd.hangouts.R
 import com.hheimerd.hangouts.components.Avatar
 import com.hheimerd.hangouts.components.AvatarDefault
+import com.hheimerd.hangouts.components.DefaultTopAppBar
 import com.hheimerd.hangouts.components.DotsDropdownMenu
 import com.hheimerd.hangouts.data.models.ChatMessage
 import com.hheimerd.hangouts.data.models.Contact
 import com.hheimerd.hangouts.data.models.MessageDirection
-import com.hheimerd.hangouts.ui.styles.topAppBarPadding
-import com.hheimerd.hangouts.ui.styles.topBarButtonSpace
 import com.hheimerd.hangouts.ui.styles.transparent
 import com.hheimerd.hangouts.ui.theme.HangoutsTheme
 import com.hheimerd.hangouts.utils.rememberColorByString
@@ -66,7 +64,7 @@ fun ChatView(
 
     Scaffold(
         topBar = { ChatAppBar(title = contact.fullName, onChatEvent) },
-        modifier = Modifier.then(modifier)
+        modifier = Modifier.then(modifier),
     ) { scaffoldPadding ->
         Column(
             modifier = Modifier
@@ -153,7 +151,7 @@ fun MessageField(
     Row(verticalAlignment = Alignment.Bottom) {
         Card(
             elevation = 4.dp,
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(40.dp),
             modifier = Modifier
                 .padding(10.dp)
                 .weight(1f)
@@ -162,7 +160,6 @@ fun MessageField(
                 value = messageText.value,
                 enabled = sendMessageAllowed,
                 onValueChange = { messageText.value = it },
-                shape = RoundedCornerShape(10.dp),
                 placeholder = {
                     if (sendMessageAllowed)
                         Text(text = stringResource(R.string.message))
@@ -220,25 +217,7 @@ fun ChatAppBar(
 ) {
     val menuExpanded = remember { mutableStateOf(false) }
 
-    TopAppBar(
-        backgroundColor = MaterialTheme.colors.background,
-        modifier = Modifier
-            .topAppBarPadding(),
-        elevation = 0.dp
-    ) {
-        IconButton(onClick = { onChatEvent(ChatEvent.GoBack) }) {
-            Icon(
-                Icons.Rounded.ArrowBack,
-                contentDescription = stringResource(id = R.string.close),
-                modifier = Modifier
-                    .fillMaxHeight()
-            )
-        }
-
-        Spacer(modifier = Modifier.topBarButtonSpace())
-
-        Text(title, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-
+    DefaultTopAppBar(title, onBackClick = { onChatEvent(ChatEvent.GoBack) }, backButtonIcon = Icons.Rounded.ArrowBack) {
         DotsDropdownMenu(menuExpanded) {
             DropdownMenuItem(onClick = {
                 menuExpanded.value = false;

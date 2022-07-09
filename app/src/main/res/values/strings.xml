@@ -35,4 +35,6 @@
     <string name="SMS_receive_permisson_required">SMS receive permission is required for this app</string>
     <string name="message">Message</string>
     <string name="SMS_send_not_allowed">SMS send not allowed</string>
+    <string name="header_color">Header color</string>
+    <string name="random_color">Random color</string>
 </resources>
