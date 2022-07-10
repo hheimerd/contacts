@@ -2,7 +2,9 @@ package com.hheimerd.hangouts.ui.contact_card
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
@@ -49,6 +51,9 @@ fun ContactCardView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(scaffoldPaddings)
+                .verticalScroll(
+                    rememberScrollState()
+                )
         ) {
             val avatarBitmap =
                 if (contact.imageUri != null) InternalStorage.getPhoto(context, contact.imageUri)
@@ -99,11 +104,13 @@ fun ContactCardView(
 
             Surface(
                 elevation = 5.dp,
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp),
                 shape = RoundedCornerShape(5)
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 60.dp, vertical = 20.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 60.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     if (contact.email.isNotBlank()) {

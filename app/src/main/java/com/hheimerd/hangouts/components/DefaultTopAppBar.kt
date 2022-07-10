@@ -1,14 +1,13 @@
 package com.hheimerd.hangouts.components
 
 import android.graphics.drawable.Icon
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +30,7 @@ fun DefaultTopAppBar(
     TopAppBar(
         modifier
             .topAppBarPadding()
+            .fillMaxWidth()
             .then(modifier),
         backgroundColor = MaterialTheme.colors.background,
         elevation = 0.dp
@@ -38,11 +38,13 @@ fun DefaultTopAppBar(
         IconButton(onClick = onBackClick, modifier = Modifier.fillMaxHeight()) {
             Icon(backButtonIcon, stringResource(R.string.back))
         }
-        Spacer(modifier = Modifier.topBarButtonSpace())
         Text(
             title,
             style = textStyle,
-            modifier = Modifier.weight(1f), overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier
+                .weight(1f)
         )
 
         rightAngle()

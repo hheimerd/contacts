@@ -38,5 +38,5 @@ fun Modifier.avatarSpace(): Modifier {
 }
 
 fun Modifier.topBarButtonSpace(): Modifier {
-    return this.width(20.dp)
+    return this.width(10.dp)
 }

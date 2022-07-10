@@ -22,6 +22,8 @@ class AddEditContactStateHost(contact: Contact? = null) {
 
     var imageUri = mutableStateOf(contact?.imageUri ?: "")
 
+    val hasInitialContact = contact != null
+
     fun allFieldsValid(): Boolean {
         return firstNameError.value == null &&
                 lastNameError.value == null &&

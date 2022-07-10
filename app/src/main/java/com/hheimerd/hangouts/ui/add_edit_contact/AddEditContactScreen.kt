@@ -32,7 +32,7 @@ fun AddEditContactScreen(
     }
 
     val titleId =
-        if (contactsViewModel.initialContact == null) R.string.create_contact_title
+        if (contactsViewModel.state?.hasInitialContact == false) R.string.create_contact_title
         else R.string.edit_contact_title
 
 

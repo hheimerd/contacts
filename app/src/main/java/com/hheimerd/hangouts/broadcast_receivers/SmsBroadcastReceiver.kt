@@ -36,8 +36,6 @@ class SmsBroadcastReceiver : BroadcastReceiver() {
             Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> receiveMessage(intent)
             SENT_INTENT -> handleMessageSent(intent)
         }
-
-
     }
 
     private fun receiveMessage(intent: Intent) {
@@ -68,7 +66,7 @@ class SmsBroadcastReceiver : BroadcastReceiver() {
         val messageId = intent.getStringExtra(SENT_INTENT_ID_KEY)
 
         if (messageId != null) {
-            coroutineScope.launch {
+            coroutineScope.launch(Dispatchers.IO) {
                 messageRepository.markSent(messageId);
             }
         }

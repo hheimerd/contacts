@@ -24,15 +24,15 @@ class AddEditContactViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModelWithUiEvent() {
 
-    var initialContact by mutableStateOf<Contact?>(null);
-    var state by mutableStateOf<AddEditContactStateHost?>(null);
+    var initialContact by mutableStateOf<Contact?>(null)
+    var state by mutableStateOf<AddEditContactStateHost?>(null)
 
     init {
         val contactId = savedStateHandle.get<String>(Routes.contactIdParam)!!
 
         viewModelScope.launch {
             contactsRepository.getById(contactId).collect { foundedContact ->
-                initialContact = foundedContact ?: Contact("", "");
+                initialContact = foundedContact ?: Contact("", "")
                 state = AddEditContactStateHost(foundedContact)
             };
         }
@@ -41,9 +41,11 @@ class AddEditContactViewModel @Inject constructor(
     fun onEvent(event: AddEditContactEvent) {
         when (event) {
             AddEditContactEvent.OnCloseButtonClick -> sendUiEvent(
-                UiEvent.PopBack,)
+                UiEvent.PopBack,
+            )
             AddEditContactEvent.OnSettingsClick -> sendUiEvent(
-                UiEvent.Navigate(Routes.Settings),)
+                UiEvent.Navigate(Routes.Settings),
+            )
             is AddEditContactEvent.OnSave -> {
                 event.contactState.let { contactState ->
                     // Contact Validation
@@ -76,7 +78,8 @@ class AddEditContactViewModel @Inject constructor(
                                 )
                             }) {
                                 sendUiEvent(
-                                    UiEvent.Navigate(Routes.ContactCard(newContact)),)
+                                    UiEvent.Navigate(Routes.ContactCard(newContact)),
+                                )
                             }
                         }
                     }

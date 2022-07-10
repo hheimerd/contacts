@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +45,7 @@ fun ChatView(
     sendMessageAllowed: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val messageText = remember { mutableStateOf("") }
+    val messageText = rememberSaveable { mutableStateOf("") }
     val lazyListSTate = rememberLazyListState()
 
     val context = LocalContext.current

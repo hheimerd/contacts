@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -242,10 +243,12 @@ fun AddEditTopAppBar(
         Button(
             onClick = { onEvent(AddEditContactEvent.OnSave(contactState)) },
             shape = RoundedCornerShape(100),
-            modifier = Modifier.width(85.dp)
+
         ) {
             Text(
                 stringResource(id = R.string.save),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
 
